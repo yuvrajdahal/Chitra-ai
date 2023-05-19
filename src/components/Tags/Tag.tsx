@@ -4,7 +4,7 @@ import React, { ButtonHTMLAttributes, FC, ReactNode } from "react";
 type TagProp = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
 };
-const Tag: FC<TagProp> = ({ children, className }) => {
+const Tag: FC<TagProp> = ({ children, className, ...props }) => {
   return (
     <button
       className={joinClassNames(
@@ -12,6 +12,7 @@ const Tag: FC<TagProp> = ({ children, className }) => {
         "focus:outline focus:outline-sky-500 ",
         className
       )}
+      {...props}
     >
       {children}
     </button>

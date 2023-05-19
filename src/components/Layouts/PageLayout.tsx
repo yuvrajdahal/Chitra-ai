@@ -6,7 +6,11 @@ type TLayout = {
 };
 function PageLayout({ children }: TLayout) {
   return (
-    <div className={"bg-gray-900 "}>
+    <div
+      className={
+        "min-h-screen w-full overflow-hidden overflow-y-scroll bg-gray-900 "
+      }
+    >
       <Navbar />
       {children}
     </div>

@@ -1,10 +1,11 @@
-import React, { FC, HTMLAttributes, useState } from "react";
+import React, { FC, HTMLAttributes, useRef, useState } from "react";
 import Button from "../Buttons/Button";
 import Input from "../Inputs/Input";
 import Tag from "../Tags/Tag";
 import { NextApiRequest, NextApiResponse } from "next";
 import { api } from "@/utils/api";
 import Loader from "../Loader/loader";
+import { motion } from "framer-motion";
 
 interface TSize {
   256: "256x256";
@@ -28,7 +29,8 @@ const Hero: FC = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<string | null>("");
+  const size = selectedImageSize.split("x");
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       alert("Enter prompt");
@@ -78,6 +80,8 @@ const Hero: FC = () => {
     : hitRegenerateApi.isLoading
     ? true
     : false;
+  const divRef = useRef<HTMLDivElement>(null);
+
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
       <div className="flex items-center gap-4">
@@ -114,7 +118,20 @@ const Hero: FC = () => {
       <div className="mt-28 flex gap-4 md:mt-4">
         {Object.entries(imageSize).map(([key, value]) => {
           return (
-            <Tag key={key} onClick={() => setImageSize(value)}>
+            <Tag
+              key={key}
+              onClick={() => {
+                setImageSize(value);
+                setImage(null);
+                if (divRef.current) {
+                  divRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                    inline: "center",
+                  });
+                }
+              }}
+            >
               <div className="jutsify-center flex items-center gap-1">
                 <div className="text-white">{value}</div>
               </div>
@@ -122,16 +139,23 @@ const Hero: FC = () => {
           );
         })}
       </div>
-      <div className="my-8 h-[500px] w-full overflow-hidden rounded border border-gray-400 bg-gray-600 text-white md:max-w-xl">
+      <motion.div
+        key={selectedImageSize}
+        className="my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
+        initial={{ width: 0, height: 0, transformOrigin: "50% 50%" }}
+        animate={{ width: `${size[0]}px`, height: `${size[1]}px` }}
+        transition={{ duration: 0.5 }}
+        ref={divRef}
+      >
         {ifCreationOrRegenIsLoading && (
           <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">
             <Loader />
           </div>
         )}
-        {hitApi.isLoading === false && hitApi.isSuccess && (
-          <img src={image} className="h-full w-full" />
+        {hitApi.isLoading === false && hitApi.isSuccess && image && (
+          <img src={image} className="h-full w-full object-contain" />
         )}
-      </div>
+      </motion.div>
       <div className="mb-8 flex gap-4">
         <Button className={"rounded px-4 py-2 text-white"} buttonType="primary">
           Buy This Image
