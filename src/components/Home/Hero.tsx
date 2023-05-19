@@ -126,8 +126,8 @@ const Hero: FC = () => {
                 if (divRef.current) {
                   divRef.current.scrollIntoView({
                     behavior: "smooth",
-                    block: "center",
-                    inline: "center",
+                    block: "end",
+                    inline: "end",
                   });
                 }
               }}
