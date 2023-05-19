@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import { z } from "zod";
 import fs from "fs";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
@@ -109,6 +110,6 @@ export const stableDiffusionRouter = createTRPCRouter({
 });
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: env.OPENAI_API_KEY,
 });
 const openAi = new OpenAIApi(configuration);
