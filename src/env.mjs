@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createEnv } from "@t3-oss/env-nextjs";
-
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -8,7 +7,7 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
-    OPENAI_API_KEY: z.string().url(),
+    OPENAI_API_KEY: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -28,7 +27,7 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    OPENAI_API_KEY: process.env.NODE_ENV,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });
