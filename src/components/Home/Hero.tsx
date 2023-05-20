@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { api } from "@/utils/api";
 import Loader from "../Loader/loader";
 import { motion } from "framer-motion";
+import joinClassNames from "@/utils/className";
 
 interface TSize {
   256: "256x256";
@@ -27,7 +28,7 @@ const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
   const [image, setImage] = useState<string | null>("");
-
+  const [credit, setCredit] = useState<number>(50);
   const size = selectedImageSize.split("x");
 
   const [previousSize, setPreviousSize] = useState(size);
@@ -55,6 +56,8 @@ const Hero: FC = () => {
         },
       }
     );
+    setCredit((prev) => prev--);
+    localStorage.setItem("credit", JSON.stringify(credit));
   }
   async function envoleRegenerateImageProcess() {
     setImage("");
@@ -78,6 +81,8 @@ const Hero: FC = () => {
         },
       }
     );
+    setCredit((prev) => prev--);
+    localStorage.setItem("credit", JSON.stringify(credit));
   }
   const creationOrRegenIsLoading = hitApi.isLoading
     ? true
@@ -87,7 +92,7 @@ const Hero: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
   const containerVariants = {
     initial: { opacity: 0 },
-    animate: { opacity: 1 },
+    animate: { opacity: 0 },
     exit: { opacity: 0 },
   };
   return (
@@ -125,9 +130,11 @@ const Hero: FC = () => {
       </div>
       <div className="mt-28 flex gap-4 md:mt-4">
         {Object.entries(imageSize).map(([key, value]) => {
+          console.log(selectedImageSize === value);
           return (
             <Tag
-              key={key}
+              key={value}
+              active={value === selectedImageSize}
               onClick={() => {
                 setPreviousSize(selectedImageSize.split("x"));
                 setImageSize(value);
@@ -156,10 +163,12 @@ const Hero: FC = () => {
           height: previousSize[0],
           transformOrigin: "50% 50%",
         }}
-        animate={{ width: `${size[0]}px`, height: `${size[1]}px` }}
+        animate={{
+          width: `${size[0]}px`,
+          height: `${size[1]}px`,
+        }}
         transition={{ duration: 0.5 }}
         ref={divRef}
-        // variants={containerVariants}
       >
         {creationOrRegenIsLoading && (
           <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">

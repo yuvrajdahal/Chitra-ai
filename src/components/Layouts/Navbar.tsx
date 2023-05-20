@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import Button from "../Buttons/Button";
 
-const Navbar: FC = () => {
+const Navbar: FC<{ credit?: number }> = ({ credit = 0 }) => {
   return (
     <div className="h-[70px] border-b border-gray-600">
       <div className="container mx-auto flex h-full w-full items-center justify-between  gap-10 px-4">
