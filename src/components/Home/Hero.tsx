@@ -26,11 +26,15 @@ enum Size {
 const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [image, setImage] = useState<string | null>("");
+
+  const size = selectedImageSize.split("x");
+
+  const [previousSize, setPreviousSize] = useState(size);
+
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
-  const [image, setImage] = useState<string | null>("");
-  const size = selectedImageSize.split("x");
+
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       alert("Enter prompt");
@@ -75,13 +79,17 @@ const Hero: FC = () => {
       }
     );
   }
-  const ifCreationOrRegenIsLoading = hitApi.isLoading
+  const creationOrRegenIsLoading = hitApi.isLoading
     ? true
     : hitRegenerateApi.isLoading
     ? true
     : false;
   const divRef = useRef<HTMLDivElement>(null);
-
+  const containerVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
       <div className="flex items-center gap-4">
@@ -121,6 +129,7 @@ const Hero: FC = () => {
             <Tag
               key={key}
               onClick={() => {
+                setPreviousSize(selectedImageSize.split("x"));
                 setImageSize(value);
                 setImage(null);
                 if (divRef.current) {
@@ -142,12 +151,17 @@ const Hero: FC = () => {
       <motion.div
         key={selectedImageSize}
         className="my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
-        initial={{ width: 0, height: 0, transformOrigin: "50% 50%" }}
+        initial={{
+          width: previousSize[0],
+          height: previousSize[0],
+          transformOrigin: "50% 50%",
+        }}
         animate={{ width: `${size[0]}px`, height: `${size[1]}px` }}
         transition={{ duration: 0.5 }}
         ref={divRef}
+        // variants={containerVariants}
       >
-        {ifCreationOrRegenIsLoading && (
+        {creationOrRegenIsLoading && (
           <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">
             <Loader />
           </div>
@@ -158,7 +172,7 @@ const Hero: FC = () => {
       </motion.div>
       <div className="mb-8 flex gap-4">
         <Button className={"rounded px-4 py-2 text-white"} buttonType="primary">
-          Buy This Image
+          Buy Credits
         </Button>
         <Button
           onClick={envoleRegenerateImageProcess}

@@ -11,8 +11,7 @@ const Navbar: FC = () => {
             Ai
           </Button>
         </div>
-        <div className="hidden items-center gap-10 ">
-          {/* <div className="hidden items-center gap-10 md:flex"> */}
+        <div className="hidden items-center gap-10 md:flex">
           <div className="cursor-pointer text-white">Faq</div>
           <div className="cursor-pointer text-white">Contact</div>
           <div className="cursor-pointer text-white">Search</div>
