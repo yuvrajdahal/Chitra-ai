@@ -9,6 +9,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <PageLayout>
       <Component {...pageProps} />
+      <div className="modal-root"></div>
     </PageLayout>
   );
 };

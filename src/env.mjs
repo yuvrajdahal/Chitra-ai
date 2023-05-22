@@ -8,6 +8,7 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     OPENAI_API_KEY: z.string(),
+    JWT_SECRET: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -28,6 +29,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    JWT_SECRET: process.env.JWT_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });
