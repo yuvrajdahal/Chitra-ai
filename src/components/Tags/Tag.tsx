@@ -11,7 +11,6 @@ const Tag: FC<TagProp> = ({
   className,
   ...props
 }) => {
-  console.log(active);
   return (
     <button
       className={joinClassNames(

@@ -130,7 +130,6 @@ const Hero: FC = () => {
       </div>
       <div className="mt-28 flex gap-4 md:mt-4">
         {Object.entries(imageSize).map(([key, value]) => {
-          console.log(selectedImageSize === value);
           return (
             <Tag
               key={value}
