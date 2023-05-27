@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "@/server/api/trpc";
 import { exampleRouter } from "@/server/api/routers/example";
 import { stableDiffusionRouter } from "@/server/api/routers/stableDifusion";
+import { handleUserRouter } from "@/server/api/routers/handleUser";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { stableDiffusionRouter } from "@/server/api/routers/stableDifusion";
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   stableDiffusion: stableDiffusionRouter,
+  userRouter: handleUserRouter,
 });
 
 // export type definition of API

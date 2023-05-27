@@ -11,6 +11,7 @@ export const env = createEnv({
     JWT_SECRET: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     NEXTAUTH_URL: z.string(),
+    NEXTAUTH_SECRET: z.string(),
   },
 
   /**
@@ -32,6 +33,7 @@ export const env = createEnv({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     JWT_SECRET: process.env.JWT_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });

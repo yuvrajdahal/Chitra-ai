@@ -90,11 +90,6 @@ const Hero: FC = () => {
     ? true
     : false;
   const divRef = useRef<HTMLDivElement>(null);
-  const containerVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 0 },
-    exit: { opacity: 0 },
-  };
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
       <div className="flex items-center gap-4">

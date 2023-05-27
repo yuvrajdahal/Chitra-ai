@@ -1,7 +1,11 @@
 import { env } from "@/env.mjs";
 import { z } from "zod";
 import fs from "fs";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { axiosApiHandler } from "@/utils/api";
 import axios from "axios";
 import { TRPCClientError } from "@trpc/client";
@@ -51,7 +55,7 @@ function downloadImage(url: string, destinationPath: string): Promise<void> {
   });
 }
 export const stableDiffusionRouter = createTRPCRouter({
-  textToImage: publicProcedure
+  textToImage: privateProcedure
     .input(
       z.object({
         text: z.string(),
@@ -79,7 +83,7 @@ export const stableDiffusionRouter = createTRPCRouter({
         throw new Error(e?.message);
       }
     }),
-  regenerate: publicProcedure
+  regenerate: privateProcedure
     .input(
       z.object({
         text: z.string(),

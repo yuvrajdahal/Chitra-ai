@@ -32,7 +32,8 @@ type CreateContextOptions = {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+const createInnerTRPCContext = async (opts: CreateContextOptions) => {
+  // const session=await unstable
   return {
     session: opts.session,
     prisma,
@@ -47,11 +48,9 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
-
   return createInnerTRPCContext({
-    session,
+    session: session,
   });
 };
 
@@ -84,7 +83,9 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { Session } from "next-auth";
-import { getServerAuthSession } from "../auth";
+import { getServerAuthSession, isAuth } from "../auth";
+import { PrismaClient } from "@prisma/client";
+import { User } from "next-auth";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -122,3 +123,12 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session) {
+    throw Error("Not authenticated");
+  }
+  return next({
+    ctx: ctx.session?.user,
+  });
+});
+export const privateProcedure = t.procedure.use(validateUserAuthentication);
