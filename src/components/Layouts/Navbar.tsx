@@ -4,11 +4,16 @@ import SignupModal from "@/components/Modals/SignupModal";
 import LoginModal from "@/components/Modals/LoginModal";
 import { signOut, useSession } from "next-auth/react";
 import NavLink from "next/link";
-const Navbar: FC<{ credit?: number }> = () => {
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+import useModalStore from "@/hooks/modal-state";
+import Loader from "../Loader/loader";
+import useAuth from "@/hooks/user-state";
 
-  const { status: authStatus, data } = useSession();
+const Navbar: FC<{ credit?: number }> = () => {
+  const { authStatus, user } = useAuth();
+
+  const { setIsSignupModalOpen } = useModalStore();
+  const { setIsLoginModalOpen } = useModalStore();
+
   return (
     <>
       <div className="h-[70px] border-b border-gray-600">
@@ -24,26 +29,34 @@ const Navbar: FC<{ credit?: number }> = () => {
               </Button>
             </div>
           </NavLink>
-          <div className="hidden items-center gap-10 md:flex">
+          <div className="hidden items-center justify-center gap-10 md:flex">
             <div className="cursor-pointer text-white">Faq</div>
             <div className="cursor-pointer text-white">Contact</div>
             <div className="cursor-pointer text-white">Pricing</div>
-            <div className="cursor-pointer font-bold text-amber-600">
-              {data?.user?.credit}
-            </div>
+
+            {authStatus !== "loading" && (
+              <div className="relative top-0.5 cursor-pointer text-lg font-bold text-amber-600">
+                {user?.credit}
+              </div>
+            )}
+            {authStatus === "loading" && (
+              <div className="">
+                <Loader ringLayerColor="fill-amber-700" />
+              </div>
+            )}
             {authStatus === "unauthenticated" && (
               <div className="flex items-center gap-8">
                 <Button
                   buttonType={"secondary"}
                   className={"rounded px-8 py-2 text-white"}
-                  onClick={() => setIsLoginModalOpen((prev) => !prev)}
+                  onClick={setIsLoginModalOpen}
                 >
                   Login
                 </Button>
 
                 <Button
                   buttonType={"primary"}
-                  onClick={() => setIsSignupModalOpen((prev) => !prev)}
+                  onClick={setIsSignupModalOpen}
                   className={"rounded px-8 py-2 text-white"}
                 >
                   Signup
@@ -68,18 +81,6 @@ const Navbar: FC<{ credit?: number }> = () => {
           </div>
         </div>
       </div>
-      {isSignupModalOpen && (
-        <SignupModal
-          isOpen={isSignupModalOpen}
-          onClose={() => setIsSignupModalOpen((prev) => !prev)}
-        />
-      )}
-      {isLoginModalOpen && (
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen((prev) => !prev)}
-        />
-      )}
     </>
   );
 };

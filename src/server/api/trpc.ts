@@ -128,7 +128,7 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
     throw Error("Not authenticated");
   }
   return next({
-    ctx: ctx.session?.user,
+    ctx: ctx,
   });
 });
 export const privateProcedure = t.procedure.use(validateUserAuthentication);

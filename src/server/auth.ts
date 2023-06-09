@@ -15,48 +15,11 @@ import { env } from "@/env.mjs";
 import { JWT } from "next-auth/jwt";
 import { AdapterUser } from "next-auth/adapters";
 
-// interface SessionType extends Session {
-//   user: {
-//     id: string;
-//     credit: number;
-//     // Add other properties specific to your user schema
-//     email: string;
-//   };
-// }
-// declare module "next-auth" {
-//   interface User {}
-
-//   interface Session {
-//     user: {
-//       id: string;
-//       credit: number;
-//       email: string;
-//       password?: string;
-//       createdAt: Date;
-//       updatedAt: Date;
-//     };
-//     expires: ISODateString;
-//   }
-// }
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: {
-//       id: string;
-//       credit: number; // Add the 'credit' property
-
-//       // ...other properties
-//       // role: UserRole;
-//     };
-//   }
-
-//   interface User {
-//     // ...other properties
-//     id: string;
-//     credit: number;
-//     // role: UserRole;
-//   }
-// }
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/",
+    error: "/",
+  },
   providers: [
     Credentials({
       name: "Credentials",
@@ -106,7 +69,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     session: async ({ session, token }) => {
-      console.log("session");
       const user = await prisma.user.findFirst({
         where: {
           id: token.id as string,

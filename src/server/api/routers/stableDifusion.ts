@@ -15,6 +15,7 @@ import { Readable } from "stream";
 import { ErrorProps } from "next/error";
 import { IncomingMessage } from "http";
 import { Configuration, OpenAIApi } from "openai";
+import { getSession } from "next-auth/react";
 // async function downloadImage(url: string) {
 //   try {
 //     console.log(url);
@@ -71,8 +72,11 @@ export const stableDiffusionRouter = createTRPCRouter({
         });
 
         const image = aiRes.data.data[0]?.url;
-
-        return { data: image };
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: ctx.session?.user.id },
+          data: { credit: { decrement: 5 } },
+        });
+        return { credit: updatedUser.credit, data: image };
       } catch (e: any) {
         if (e.response) {
           console.log(e.response.status);
@@ -99,14 +103,15 @@ export const stableDiffusionRouter = createTRPCRouter({
         });
 
         const image = aiRes.data.data[0]?.url;
-
+        await ctx.prisma.user.update({
+          where: { id: ctx.session?.user.id },
+          data: { credit: { decrement: 5 } },
+        });
         return { data: image };
       } catch (e: any) {
         if (e.response) {
-          console.log(e.response.status);
           console.log(e.response.data);
         } else {
-          console.log(e.message);
         }
         throw new Error(e?.message);
       }

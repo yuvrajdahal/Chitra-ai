@@ -6,11 +6,7 @@ import { api } from "@/utils/api";
 import Hero from "@/components/Home/Hero";
 
 const Home: NextPage = () => {
-  return (
-    <>
-      <Hero />
-    </>
-  );
+  return <Hero />;
 };
 
 export default Home;

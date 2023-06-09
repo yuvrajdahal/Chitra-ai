@@ -7,6 +7,8 @@ import { api } from "@/utils/api";
 import Loader from "../Loader/loader";
 import { motion } from "framer-motion";
 import joinClassNames from "@/utils/className";
+import useAuth from "@/hooks/user-state";
+import useModalStore from "@/hooks/modal-state";
 
 interface TSize {
   256: "256x256";
@@ -36,6 +38,8 @@ const Hero: FC = () => {
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
 
+  const { authStatus, user, setUser } = useAuth();
+
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       alert("Enter prompt");
@@ -52,12 +56,14 @@ const Hero: FC = () => {
       },
       {
         onSuccess: (res) => {
+          setUser({
+            ...user,
+            credit: res.credit,
+          });
           if (res.data) setImage(res.data);
         },
       }
     );
-    setCredit((prev) => prev--);
-    localStorage.setItem("credit", JSON.stringify(credit));
   }
   async function envoleRegenerateImageProcess() {
     setImage("");
@@ -89,6 +95,8 @@ const Hero: FC = () => {
     : hitRegenerateApi.isLoading
     ? true
     : false;
+  const { setIsSignupModalOpen } = useModalStore();
+
   const divRef = useRef<HTMLDivElement>(null);
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
@@ -109,17 +117,27 @@ const Hero: FC = () => {
             placeholder="Generate a Nepalese developing a site"
             onChange={(e) => setPrompt(e.target.value)}
           />
-          <Button
-            buttonType="primary"
-            className="rounded px-4 py-2 text-white"
-            onClick={envokeImageCreationProcess}
-          >
-            {hitApi.isLoading ? (
-              <Loader ringLayerColor="fill-amber-700" />
-            ) : (
-              "Create"
-            )}
-          </Button>
+          {authStatus === "authenticated" ? (
+            <Button
+              buttonType="primary"
+              className="rounded px-4 py-2 text-white"
+              onClick={envokeImageCreationProcess}
+            >
+              {hitApi.isLoading ? (
+                <Loader ringLayerColor="fill-amber-700" />
+              ) : (
+                "Create"
+              )}
+            </Button>
+          ) : (
+            <Button
+              className={"rounded px-4 py-2 text-white"}
+              buttonType="primary"
+              onClick={setIsSignupModalOpen}
+            >
+              Buy Credits
+            </Button>
+          )}
         </div>
         <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
       </div>
@@ -173,18 +191,23 @@ const Hero: FC = () => {
           <img src={image} className="h-full w-full object-contain" />
         )}
       </motion.div>
-      <div className="mb-8 flex gap-4">
-        <Button className={"rounded px-4 py-2 text-white"} buttonType="primary">
-          Buy Credits
-        </Button>
-        <Button
-          onClick={envoleRegenerateImageProcess}
-          className={"rounded px-4 py-2 text-white"}
-          buttonType="secondary"
-        >
-          {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
-        </Button>
-      </div>
+      {authStatus === "authenticated" && (
+        <div className="mb-8 flex gap-4">
+          <Button
+            onClick={envoleRegenerateImageProcess}
+            className={"rounded px-4 py-2 text-white"}
+            buttonType="secondary"
+          >
+            {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
+          </Button>
+          <Button
+            className={"rounded px-4 py-2 text-white"}
+            buttonType="primary"
+          >
+            Buy Credits
+          </Button>
+        </div>
+      )}{" "}
     </section>
   );
 };
