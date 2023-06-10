@@ -4,12 +4,14 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { create } from "zustand";
 
+export type CustomUser =
+  | {
+      credit: number;
+    }
+  | Session["user"];
 type UserType = {
-  user:
-    | {
-        credit: number;
-      }
-    | Session["user"];
+  user:CustomUser
+    
   setUser: (
     payload:
       | Session["user"]
