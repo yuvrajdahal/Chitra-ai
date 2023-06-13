@@ -135,7 +135,7 @@ const Hero: FC = () => {
               buttonType="primary"
               onClick={setIsSignupModalOpen}
             >
-              Buy Credits
+              Signup
             </Button>
           )}
         </div>
