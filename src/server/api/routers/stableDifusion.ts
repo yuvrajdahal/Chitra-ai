@@ -5,6 +5,7 @@ import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
+  validationProcedure,
 } from "@/server/api/trpc";
 import { axiosApiHandler } from "@/utils/api";
 import axios from "axios";
@@ -56,7 +57,7 @@ function downloadImage(url: string, destinationPath: string): Promise<void> {
   });
 }
 export const stableDiffusionRouter = createTRPCRouter({
-  textToImage: privateProcedure
+  textToImage: validationProcedure
     .input(
       z.object({
         text: z.string(),
@@ -87,7 +88,7 @@ export const stableDiffusionRouter = createTRPCRouter({
         throw new Error(e?.message);
       }
     }),
-  regenerate: privateProcedure
+  regenerate: validationProcedure
     .input(
       z.object({
         text: z.string(),

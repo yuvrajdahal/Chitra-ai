@@ -83,7 +83,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { Session } from "next-auth";
-import { getServerAuthSession, isAuth } from "../auth";
+import { getServerAuthSession } from "../auth";
 import { PrismaClient } from "@prisma/client";
 import { User } from "next-auth";
 
@@ -131,4 +131,16 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
     ctx: ctx,
   });
 });
+const validateUserCredit = t.middleware(async ({ ctx, next }) => {
+  const user = await ctx.prisma.user.findUnique({
+    where: { id: ctx.session?.user.id },
+  });
+
+  return next({
+    ctx: ctx,
+  });
+});
+export const validationProcedure = t.procedure
+  .use(validateUserAuthentication)
+  .use(validateUserCredit);
 export const privateProcedure = t.procedure.use(validateUserAuthentication);
