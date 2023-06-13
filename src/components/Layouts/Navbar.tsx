@@ -119,39 +119,48 @@ const LinksForMobile: FC<{
     <div className="relative block md:hidden">
       <div className="justfiy-center flex items-center gap-4">
         {authStatus !== "loading" && (
-          <div className="flex items-center justify-center gap-4">
-            <div className="flex gap-2 whitespace-nowrap text-white">
-              Credit{" "}
-              <motion.span
-                initial={{
-                  x: 0,
-                }}
-                animate={{
-                  x: 4,
-                }}
-                transition={{
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  duration: 0.6,
-                  ease: "easeIn",
-                }}
-              >
-                -&gt;
-              </motion.span>
+          <>
+            <div className="flex items-center justify-center gap-4">
+              {authStatus === "unauthenticated" && (
+                <div className="flex gap-2 whitespace-nowrap text-white">
+                  Credit{" "}
+                  <motion.span
+                    initial={{
+                      x: 0,
+                    }}
+                    animate={{
+                      x: 4,
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      repeatType: "mirror",
+                      duration: 0.6,
+                      ease: "easeIn",
+                    }}
+                  >
+                    -&gt;
+                  </motion.span>
+                </div>
+              )}
+              <div className="relative top-0.5 cursor-pointer text-lg font-bold text-amber-600">
+                {user?.credit}
+              </div>
             </div>
-            <div className="relative top-0.5 cursor-pointer text-lg font-bold text-amber-600">
-              {user?.credit}
-            </div>
-          </div>
+            <Button
+              buttonType={"secondary"}
+              className={"block w-full rounded px-4 py-2 text-white"}
+              onClick={() => setNavModalOpen((prev) => !prev)}
+            >
+              #
+            </Button>
+          </>
         )}
 
-        <Button
-          buttonType={"secondary"}
-          className={"block w-full rounded px-4 py-2 text-white"}
-          onClick={() => setNavModalOpen((prev) => !prev)}
-        >
-          #
-        </Button>
+        {authStatus === "loading" && (
+          <div className="mt-2">
+            <Loader ringLayerColor="fill-amber-700" />
+          </div>
+        )}
       </div>
       {isMobileNavModalOpen === true && (
         <div className="absolute right-0">
@@ -167,11 +176,6 @@ const LinksForMobile: FC<{
                 Pricing
               </div>
 
-              {authStatus === "loading" && (
-                <div className="mt-2">
-                  <Loader ringLayerColor="fill-amber-700" />
-                </div>
-              )}
               {authStatus === "unauthenticated" && (
                 <div className="mx-4 mt-2">
                   <Button
