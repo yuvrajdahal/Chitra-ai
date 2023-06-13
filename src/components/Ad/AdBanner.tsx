@@ -13,7 +13,7 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
       console.log(err);
     }
   }, []);
-
+  // test
   return (
     <ins
       className="adsbygoogle adbanner-customize block h-[200px] w-[200px] bg-white"
