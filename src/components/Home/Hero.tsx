@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, useRef, useState } from "react";
+import React, { FC, HTMLAttributes, Suspense, useRef, useState } from "react";
 import Button from "../Buttons/Button";
 import Input from "../Inputs/Input";
 import Tag from "../Tags/Tag";

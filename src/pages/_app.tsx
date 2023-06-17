@@ -12,22 +12,6 @@ const MyApp: AppType<{ session: Session }> = ({ Component, pageProps }) => {
   return (
     <SessionProvider session={pageProps?.session}>
       <PageLayout>
-        <Script
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1959896930486958"
-        />
-        <Script
-          id="adsbygoogle-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-          (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: ca-pub-1959896930486958,
-            enable_page_level_ads: true
-       });
-          `,
-          }}
-        />
         <Component {...pageProps} />
         <div className="modal-root"></div>
       </PageLayout>

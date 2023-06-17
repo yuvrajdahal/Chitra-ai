@@ -12,7 +12,7 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
 
   useEffect(() => {
     try {
-      if (mounted) {
+      if (window && mounted) {
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       }
@@ -22,13 +22,13 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
   }, []);
 
   if (!mounted) {
-    return null; // return this null to avoid hydration errors
+    return <></>;
   }
   return (
     <ins
       data-ad-slot="3200526485"
       data-full-width-responsive="true"
-      className="adsbygoogle adbanner-customize adsbygoogle block bg-white"
+      className=" adsbygoogle block bg-white"
       {...props}
     />
   );
