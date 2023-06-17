@@ -7,8 +7,10 @@ type AdBannerProps = {
 const AdBanner: React.FC<AdBannerProps> = (props) => {
   useEffect(() => {
     try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      if (window) {
+        // @ts-ignore
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
     } catch (err) {
       console.log(err);
     }
@@ -16,12 +18,10 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
   // test
   return (
     <ins
-      className="adsbygoogle adbanner-customize block h-[200px] w-[200px] bg-white"
-      data-ad-client={"ca-pub-1959896930486958"}
-      style={{
-        display: "block",
-        overflow: "hidden",
-      }}
+      data-ad-client="ca-pub-1959896930486958"
+      data-ad-slot="3200526485"
+      data-full-width-responsive="true"
+      className="adsbygoogle adbanner-customize adsbygoogle block bg-white"
       {...props}
     />
   );

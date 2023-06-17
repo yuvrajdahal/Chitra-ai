@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import joinClassNames from "@/utils/className";
 import useAuth from "@/hooks/user-state";
 import useModalStore from "@/hooks/modal-state";
+import AdBanner from "../Ad/AdBanner";
 
 interface TSize {
   256: "256x256";
@@ -100,6 +101,7 @@ const Hero: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
+      <AdBanner />
       <div className="flex items-center gap-4">
         <div className="text-4xl font-semibold text-white">Chitra</div>
         <Button buttonType="primary" className={"rounded px-2 py-1 text-white"}>
@@ -139,7 +141,9 @@ const Hero: FC = () => {
             </Button>
           )}
         </div>
-        <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
+        {authStatus === "unauthenticated" && (
+          <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
+        )}
       </div>
       <div className="mt-28 flex gap-4 md:mt-4">
         {Object.entries(imageSize).map(([key, value]) => {
