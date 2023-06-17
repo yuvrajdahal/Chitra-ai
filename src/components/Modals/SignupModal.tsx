@@ -6,6 +6,7 @@ import { env } from "@/env.mjs";
 import { Router, useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { User } from "@prisma/client";
+import Loader from "../Loader/loader";
 
 type ModalProps = {
   isOpen: boolean;
@@ -68,7 +69,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               Close
             </Button>
             <Button className={"rounded px-8 py-2 text-white"} type="submit">
-              Signup
+              {signupMutation.isLoading ? (
+                <Loader ringLayerColor="fill-amber-700" />
+              ) : (
+                "Signup"
+              )}
             </Button>
           </div>
         </form>
