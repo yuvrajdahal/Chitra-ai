@@ -20,13 +20,12 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
       console.log(err);
     }
   }, []);
-  
+
   if (!mounted) {
     return null; // return this null to avoid hydration errors
   }
   return (
     <ins
-      data-ad-client="ca-pub-1959896930486958"
       data-ad-slot="3200526485"
       data-full-width-responsive="true"
       className="adsbygoogle adbanner-customize adsbygoogle block bg-white"
