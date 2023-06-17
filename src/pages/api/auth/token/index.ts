@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { env } from "process";
 
 const prisma = new PrismaClient();
 
@@ -29,7 +30,7 @@ export default async function handler(
         // process.env.NODE_ENV === "development"
         //   ? process.env.DEV_BASE_URL + "/login"
         //   : process.env.PROD_BASE_URL + "/login"
-        "http://localhost:3000"
+        env.NODE_ENV === "development" ? `${env.DEV_HOST}` : `${env.PROD_HOST}`
       );
     } else {
       res.status(404).json({

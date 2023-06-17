@@ -42,7 +42,9 @@ export const handleUserRouter = createTRPCRouter({
         subject: "Hello World",
         html: `<h2>${result.email} Thanks for catchin up to our site</h2>
       <h4>Please verify your email</h4>
-      <a href="http://localhost:3000/api/auth/token?token=${result.emailToken}">Veriy email</a>
+      <a href="${
+        env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
+      }/api/auth/token?token=${result.emailToken}">Veriy email</a>
     `,
       });
 

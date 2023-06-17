@@ -13,6 +13,8 @@ export const env = createEnv({
     NEXTAUTH_URL: z.string(),
     NEXTAUTH_SECRET: z.string(),
     RESEND_EMAIL_API: z.string(),
+    DEV_HOST: z.string(),
+    PROD_HOST: z.string(),
   },
 
   /**
@@ -36,6 +38,8 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     RESEND_EMAIL_API: process.env.RESEND_EMAIL_API,
+    PROD_HOST: process.env.PROD_HOST,
+    DEV_HOST: process.env.DEV_HOST,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });
