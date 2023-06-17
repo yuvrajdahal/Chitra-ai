@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 type AdBannerProps = {
   // Props for customizing the ad banner
 };
 
 const AdBanner: React.FC<AdBannerProps> = (props) => {
+  const [mounted, setMounted] = useState<boolean>(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     try {
-      if (window) {
+      if (mounted) {
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       }
@@ -15,7 +20,10 @@ const AdBanner: React.FC<AdBannerProps> = (props) => {
       console.log(err);
     }
   }, []);
-  // test
+  
+  if (!mounted) {
+    return null; // return this null to avoid hydration errors
+  }
   return (
     <ins
       data-ad-client="ca-pub-1959896930486958"
