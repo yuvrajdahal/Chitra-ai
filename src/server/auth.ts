@@ -14,6 +14,7 @@ import { Session } from "inspector";
 import { env } from "@/env.mjs";
 import { JWT } from "next-auth/jwt";
 import { AdapterUser } from "next-auth/adapters";
+import { TRPCClientError } from "@trpc/client";
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -39,6 +40,9 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user) {
+            return null;
+          }
+          if (user.isVerifed === false) {
             return null;
           }
           const isValidPassword = await verify(user.password, password);

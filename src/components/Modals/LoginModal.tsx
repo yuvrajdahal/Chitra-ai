@@ -18,11 +18,14 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const handleSignup: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const result = await signIn("credentials", {
-      redirect: true,
+      redirect: false,
       email,
       password,
       callbackUrl: "/",
     });
+    if (result?.status === 401) {
+      throw Error("Validate your email");
+    }
   };
 
   if (!isOpen) return null;
