@@ -5,6 +5,7 @@ import Input from "../Inputs/Input";
 import { env } from "@/env.mjs";
 import { Router, useRouter } from "next/router";
 import { api } from "@/utils/api";
+import { User } from "@prisma/client";
 
 type ModalProps = {
   isOpen: boolean;
@@ -17,13 +18,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const session = useSession();
   const router = useRouter();
   const signupMutation = api.userRouter.register.useMutation();
+  const [user, setUser] = useState<User | null>(null);
+
   const handleSignup: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const result = await signupMutation.mutateAsync({
       email,
       password,
     });
-    console.log(result, session);
+    setUser(result.data);
   };
 
   if (!isOpen) return null;
@@ -52,8 +55,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+            {user?.isVerifed === false && (
+              <div className="">Verify Your Email Go gmail</div>
+            )}
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-start gap-4">
             <Button
               className={"rounded px-8 py-2 text-white"}
               buttonType="secondary"

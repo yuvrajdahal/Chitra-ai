@@ -16,6 +16,7 @@ declare module "next-auth" {
     password?: string;
     createdAt: Date;
     updatedAt: Date;
+    timeout: Data | null;
   }
   interface Session {
     user: {
@@ -24,6 +25,7 @@ declare module "next-auth" {
       email: string | null;
       createdAt: Date;
       updatedAt: Date;
+      timeout: Data | null;
     };
     expires: ISODateString;
   }

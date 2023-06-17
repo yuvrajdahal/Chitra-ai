@@ -80,6 +80,9 @@ export const authOptions: NextAuthOptions = {
           credit: true,
           createdAt: true,
           updatedAt: true,
+          timeout: true,
+          isVerifed: true,
+          emailToken: true,
         },
       });
       if (user && user.email !== null) {

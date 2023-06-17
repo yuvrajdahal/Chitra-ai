@@ -77,6 +77,7 @@ export const stableDiffusionRouter = createTRPCRouter({
           where: { id: ctx.session?.user.id },
           data: { credit: { decrement: 5 } },
         });
+
         return { credit: updatedUser.credit, data: image };
       } catch (e: any) {
         if (e.response) {

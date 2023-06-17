@@ -86,6 +86,7 @@ import { Session } from "next-auth";
 import { getServerAuthSession } from "../auth";
 import { PrismaClient } from "@prisma/client";
 import { User } from "next-auth";
+import { TRPCClientError } from "@trpc/client";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -132,13 +133,35 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
   });
 });
 const validateUserCredit = t.middleware(async ({ ctx, next }) => {
-  const user = await ctx.prisma.user.findUnique({
-    where: { id: ctx.session?.user.id },
-  });
+  const user = ctx.session?.user!;
+  let date = new Date(user?.timeout);
+  if (date.getTime() >= new Date().getTime() && user?.credit <= 0) {
+    const tomorrow = new Date();
+    tomorrow.setMinutes(tomorrow.getMinutes() + 5);
 
-  return next({
-    ctx: ctx,
-  });
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: { timeout: tomorrow },
+    });
+
+    throw new TRPCClientError("Sorry mate, out of energy");
+  }
+
+  if (
+    user?.credit <= 0 &&
+    user?.timeout !== null &&
+    user.timeout <= new Date()
+  ) {
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        timeout: null as any,
+        credit: 50,
+      },
+    });
+  }
+
+  return next({ ctx });
 });
 export const validationProcedure = t.procedure
   .use(validateUserAuthentication)
