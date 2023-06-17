@@ -36,11 +36,13 @@ export const handleUserRouter = createTRPCRouter({
           isVerifed: false,
         },
       });
+
       const sentEmail = await resend.emails.send({
-        from: "chitraai@gmail.dev",
+        from: "onboarding@resend.dev",
         to: email,
         subject: "Verify your email",
-        html: `<!DOCTYPE html>
+        html: `
+        <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -48,42 +50,84 @@ export const handleUserRouter = createTRPCRouter({
   <title>Email Verification</title>
   <style>
     /* Styles for the email template */
+    :root {
+      --primary-color: #ffad00; /* Updated to amber-700 */
+      --text-color: #333333;
+      --secondary-color: #718096;
+      --bg-color: #f7fafc;
+      --button-bg-color: var(--primary-color);
+      --button-text-color: #ffffff;
+      --button-padding: 10px 20px;
+      --button-border-radius: 5px;
+      --button-margin-top: 20px;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background-color: var(--bg-color);
       padding: 20px;
     }
 
-    h2 {
-      color: #333333;
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .heading {
+      color: var(--primary-color);
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      vertical-align: middle;
     }
 
     h4 {
-      color: #777777;
+      color: var(--secondary-color);
+      font-size: 18px;
+      margin-bottom: 20px;
     }
 
-    a {
+    p {
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+
+    .btn {
       display: inline-block;
-      background-color: #007bff;
-      color: #ffffff;
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
       text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      margin-top: 20px;
+      padding: var(--button-padding);
+      border-radius: var(--button-border-radius);
+      margin-top: var(--button-margin-top);
     }
   </style>
 </head>
 <body>
-  <h2>${result.email}</h2>
-  <h4>Thanks for catching up to our site</h4>
-  <p>Please verify your email by clicking the button below:</p>
-  <a href="${
-    env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
-  }/api/auth/token?token=${result.emailToken}">Verify Email</a>
+  <div class="container">
+    <h1 class="heading">Chitra Ai</h1>
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+    </svg>
+    <h4 class="text-secondary-color text-lg mb-4">Thank you for joining our site</h4>
+    <p class="text-text-color mb-4">To get started, please verify your email by clicking the button below:</p>
+    <a href="${
+      env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
+    }/api/auth/token?token=${
+          result.emailToken
+        }" class="btn bg-primary-color text-button-text-color">Verify Email</a>
+    <p class="text-text-color mt-4">If you did not sign up for an account, please ignore this email.</p>
+  </div>
 </body>
 </html>
-
-    `,
+`,
       });
 
       return {
