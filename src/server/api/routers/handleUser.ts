@@ -37,14 +37,52 @@ export const handleUserRouter = createTRPCRouter({
         },
       });
       const sentEmail = await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "chitraai@gmail.dev",
         to: email,
-        subject: "Hello World",
-        html: `<h2>${result.email} Thanks for catchin up to our site</h2>
-      <h4>Please verify your email</h4>
-      <a href="${
-        env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
-      }/api/auth/token?token=${result.emailToken}">Veriy email</a>
+        subject: "Verify your email",
+        html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <style>
+    /* Styles for the email template */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #333333;
+    }
+
+    h4 {
+      color: #777777;
+    }
+
+    a {
+      display: inline-block;
+      background-color: #007bff;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>${result.email}</h2>
+  <h4>Thanks for catching up to our site</h4>
+  <p>Please verify your email by clicking the button below:</p>
+  <a href="${
+    env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
+  }/api/auth/token?token=${result.emailToken}">Verify Email</a>
+</body>
+</html>
+
     `,
       });
 
