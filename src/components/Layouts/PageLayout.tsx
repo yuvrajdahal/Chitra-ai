@@ -4,6 +4,7 @@ import React, { ReactNode } from "react";
 import Navbar from "./Navbar";
 import useModalStore from "@/hooks/modal-state";
 import LoginModal from "../Modals/LoginModal";
+import ErrorBoundary from "../Boundary/ErrorBoundary";
 type TLayout = {
   children: ReactNode;
 };
@@ -18,16 +19,18 @@ function PageLayout({ children }: TLayout) {
       }
     >
       <Navbar />
-      {children}
-      {isSignupModalOpen && (
-        <SignupModal
-          isOpen={isSignupModalOpen}
-          onClose={setIsSignupModalOpen}
-        />
-      )}
-      {isLoginModalOpen && (
-        <LoginModal isOpen={isLoginModalOpen} onClose={setIsLoginModalOpen} />
-      )}
+      <ErrorBoundary>
+        {children}
+        {isSignupModalOpen && (
+          <SignupModal
+            isOpen={isSignupModalOpen}
+            onClose={setIsSignupModalOpen}
+          />
+        )}
+        {isLoginModalOpen && (
+          <LoginModal isOpen={isLoginModalOpen} onClose={setIsLoginModalOpen} />
+        )}
+      </ErrorBoundary>
     </div>
   );
 }

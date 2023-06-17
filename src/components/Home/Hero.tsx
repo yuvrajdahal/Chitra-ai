@@ -90,6 +90,7 @@ const Hero: FC = () => {
     setCredit((prev) => prev--);
     localStorage.setItem("credit", JSON.stringify(credit));
   }
+
   const creationOrRegenIsLoading = hitApi.isLoading
     ? true
     : hitRegenerateApi.isLoading
@@ -98,6 +99,7 @@ const Hero: FC = () => {
   const { setIsSignupModalOpen } = useModalStore();
 
   const divRef = useRef<HTMLDivElement>(null);
+
   return (
     <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
       <div className="flex items-center gap-4">
