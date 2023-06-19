@@ -29,9 +29,6 @@ class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary:", error, errorInfo);
-    // Perform additional actions here, such as logging the error or sending error reports
-
-    // Display error toast using react-hot-toast
     toast.error("Oops! Something went wrong.");
   }
 

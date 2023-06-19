@@ -5,6 +5,7 @@ import Input from "../Inputs/Input";
 import { env } from "@/env.mjs";
 import { Router, useRouter } from "next/router";
 import { api } from "@/utils/api";
+import { toast } from "react-hot-toast";
 
 type ModalProps = {
   isOpen: boolean;
@@ -23,8 +24,9 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       password,
       callbackUrl: "/",
     });
-    if (result?.status === 401) {
-      throw Error("Validate your email");
+
+    if (result?.error) {
+      toast.error("Oops! Something went wrong.");
     }
   };
 

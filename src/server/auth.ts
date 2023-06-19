@@ -1,20 +1,11 @@
 import { verify } from "argon2";
 import { prisma } from "@/server/db";
 import { GetServerSidePropsContext } from "next";
-import {
-  DefaultSession,
-  NextAuthOptions,
-  getServerSession,
-  User,
-} from "next-auth";
+import { NextAuthOptions, getServerSession, User } from "next-auth";
 
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { Session } from "inspector";
 import { env } from "@/env.mjs";
-import { JWT } from "next-auth/jwt";
-import { AdapterUser } from "next-auth/adapters";
-import { TRPCClientError } from "@trpc/client";
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -50,7 +41,6 @@ export const authOptions: NextAuthOptions = {
           if (!isValidPassword) {
             return null;
           }
-          console.log(user);
           return user;
         } catch (error) {
           console.log(error);
