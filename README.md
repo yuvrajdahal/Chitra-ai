@@ -14,8 +14,8 @@ npm install
 
 ```
 
-DATABASE_URL=
-OPENAI_API_KEY=
+DATABASE_URL= <br>
+OPENAI_API_KEY= <br>
 JWT_SECRET= <br>
 NODE_ENV= <br>
 NEXTAUTH_URL= <br>
