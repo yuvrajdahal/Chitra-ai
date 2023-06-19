@@ -1,29 +1,69 @@
-# Create T3 App
+# Chitra AI
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Chitra AI is a T3 Stack Next.js application that uses OpenAI to generate text, translate languages, write different kinds of creative content, and answer your questions in an informative way.
 
-## What's next? How do I make an app with this?
+## Getting Started
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+1. Install the dependencies:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+npm install
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+```
 
-## Learn More
+2. Create a `.env` file and add the following environment variables:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+DATABASE_URL=
+OPENAI_API_KEY=
+JWT_SECRET=
+NODE_ENV=
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
+RESEND_EMAIL_API=
+DEV_HOST=
+PROD_HOST=
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+```
 
-## How do I deploy this?
+3. Run the development server:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
-# Chitra-ai
+```
+
+npm run dev
+
+The application will be available at `http://localhost:3000`.
+
+## Features
+
+- Generate text: Chitra AI can generate text, translate languages, write different kinds of creative content, and answer your questions in an informative way.
+- Next.js: Chitra AI is built on Next.js, which is a React framework that makes it easy to build and deploy server-rendered web applications.
+- OpenAI: Chitra AI uses OpenAI to generate text, translate languages, write different kinds of creative content, and answer your questions in an informative way.
+
+## Development
+
+To contribute to Chitra AI, please fork the repository and make your changes in a separate branch. Once you are finished, please open a pull request and I will review your changes.
+
+## Stack
+
+- T3 Stack
+
+### Frontend
+
+- React
+- Next.js
+- Tailwind CSS
+
+### Backend
+
+- Node.js
+- Prisma
+- MySql
+
+### API
+
+- OpenAI
+
+## License
+
+Chitra AI is licensed under the MIT License.
