@@ -79,7 +79,7 @@ export const createContext = async (opts: CreateNextContextOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { Session } from "next-auth";
@@ -134,33 +134,12 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
 });
 const validateUserCredit = t.middleware(async ({ ctx, next }) => {
   const user = ctx.session?.user!;
-  let date = new Date(user?.timeout);
-  if (date.getTime() >= new Date().getTime() && user?.credit <= 0) {
-    const tomorrow = new Date();
-    tomorrow.setMinutes(tomorrow.getMinutes() + 5);
-
-    await ctx.prisma.user.update({
-      where: { id: user.id },
-      data: { timeout: tomorrow },
-    });
-
-    throw new TRPCClientError("Sorry mate, out of energy");
-  }
-
-  if (
-    user?.credit <= 0 &&
-    user?.timeout !== null &&
-    user.timeout <= new Date()
-  ) {
-    await ctx.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        timeout: null as any,
-        credit: 50,
-      },
+  if (user.credit <= 0) {
+    throw new TRPCError({
+      message: "Sorry mate, out of energy",
+      code: "BAD_REQUEST",
     });
   }
-
   return next({ ctx });
 });
 export const validationProcedure = t.procedure

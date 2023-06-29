@@ -71,7 +71,6 @@ export const stableDiffusionRouter = createTRPCRouter({
           n: 1,
           size: input.size,
         });
-
         const image = aiRes.data.data[0]?.url;
         const updatedUser = await ctx.prisma.user.update({
           where: { id: ctx.session?.user.id },

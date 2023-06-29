@@ -40,9 +40,9 @@ class ErrorBoundary extends React.Component<
           <h2 className="mb-4 text-2xl font-semibold text-amber-600">
             Oops, there was an error!
           </h2>
-          <p className="mb-4 text-center text-white">
+          <div className="mb-4 text-center text-white">
             Something went wrong while loading the page. Please try again.
-          </p>
+          </div>
           <Button
             buttonType="primary"
             className="flex items-center rounded px-4 py-2 text-white"

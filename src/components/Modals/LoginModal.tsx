@@ -26,7 +26,7 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     });
 
     if (result?.error) {
-      toast.error("Oops! Something went wrong.");
+      toast.error("Something went wrong.");
     }
   };
 

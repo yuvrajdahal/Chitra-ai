@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "src/pages/_error.tsx"  ],
   "exclude": ["node_modules"]
 }

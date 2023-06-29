@@ -108,9 +108,9 @@ const Hero: FC = () => {
           Ai
         </Button>
       </div>
-      <p className="mt-4 text-lg text-gray-400">
+      <div className="mt-4 text-lg text-gray-400">
         Free online AI image generator from text
-      </p>
+      </div>
       <div className="flex-reverse-col relative mt-8 flex gap-4  md:flex-row">
         <div className="flex items-center gap-4">
           <Input

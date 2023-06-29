@@ -7,7 +7,6 @@ import PageLayout from "@/components/Layouts/PageLayout";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Router } from "next/router";
-import ErrorBoundary from "@/components/Boundary/ErrorBoundary";
 
 const MyApp: AppType<{ session: Session }> = ({ Component, pageProps }) => {
   return (
@@ -16,7 +15,6 @@ const MyApp: AppType<{ session: Session }> = ({ Component, pageProps }) => {
         <Component {...pageProps} />
         <div className="modal-root"></div>
       </PageLayout>
-      <Toaster position="top-right" reverseOrder={false} />
     </SessionProvider>
   );
 };
