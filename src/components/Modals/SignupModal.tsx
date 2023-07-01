@@ -28,9 +28,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       password,
     });
     setUser(result.data);
+    onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return <></>;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 ">
       <div className="flex max-w-2xl flex-col rounded-lg bg-white p-8">

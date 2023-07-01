@@ -6,6 +6,7 @@ import { env } from "@/env.mjs";
 import { Router, useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { toast } from "react-hot-toast";
+import Loader from "../Loader/loader";
 
 type ModalProps = {
   isOpen: boolean;
@@ -15,22 +16,25 @@ type ModalProps = {
 const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const handleSignup: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
       callbackUrl: "/",
     });
-
+    setLoading(false);
+    onClose();
     if (result?.error) {
       toast.error("Something went wrong.");
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return <></>;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 ">
@@ -57,7 +61,7 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               />
             </div>
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-start gap-4">
             <Button
               className={"rounded px-8 py-2 text-white"}
               buttonType="secondary"
@@ -66,7 +70,7 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               Close
             </Button>
             <Button className={"rounded px-8 py-2 text-white"} type="submit">
-              Login
+              {isLoading ? <Loader ringLayerColor="fill-amber-700" /> : "Login"}
             </Button>
           </div>
         </form>

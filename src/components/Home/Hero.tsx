@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import joinClassNames from "@/utils/className";
 import useAuth from "@/hooks/user-state";
 import useModalStore from "@/hooks/modal-state";
+import { toast } from "react-hot-toast";
+import useWindowSize from "@/hooks/useWindowSize";
 
 interface TSize {
   256: "256x256";
@@ -38,6 +40,9 @@ const Hero: FC = () => {
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
 
+  const windowSize = useWindowSize();
+  const isMobile = windowSize.width <= 768;
+
   const { authStatus, user, setUser } = useAuth();
 
   async function envokeImageCreationProcess() {
@@ -61,6 +66,9 @@ const Hero: FC = () => {
             credit: res.credit,
           });
           if (res.data) setImage(res.data);
+        },
+        onError: (err) => {
+          toast.error(err.message);
         },
       }
     );
@@ -175,13 +183,13 @@ const Hero: FC = () => {
         key={selectedImageSize}
         className="my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
         initial={{
-          width: previousSize[0],
-          height: previousSize[0],
+          width: isMobile ? "256px" : previousSize[0],
+          height: isMobile ? "256px" : previousSize[0],
           transformOrigin: "50% 50%",
         }}
         animate={{
-          width: `${size[0]}px`,
-          height: `${size[1]}px`,
+          width: isMobile ? "256px" : `${size[0]}px`,
+          height: isMobile ? "256px" : `${size[1]}px`,
         }}
         transition={{ duration: 0.5 }}
         ref={divRef}
