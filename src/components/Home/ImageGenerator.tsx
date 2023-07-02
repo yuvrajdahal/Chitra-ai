@@ -32,7 +32,6 @@ const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
   const [image, setImage] = useState<string | null>("");
-  const [credit, setCredit] = useState<number>(50);
   const size = selectedImageSize.split("x");
 
   const [previousSize, setPreviousSize] = useState(size);
@@ -47,11 +46,13 @@ const Hero: FC = () => {
 
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
-      alert("Enter prompt");
-      return;
-    }
-    if (userPrompt === "") {
-      alert("Enter prompt");
+      toast("Enter Prompt", {
+        icon: "❗",
+        style: {
+          backgroundColor: "#4b5563",
+          color: "#ffffff",
+        },
+      });
       return;
     }
     await hitApi.mutateAsync(
@@ -68,7 +69,12 @@ const Hero: FC = () => {
           if (res.data) setImage(res.data);
         },
         onError: (err) => {
-          toast.error(err.message);
+          toast.error(err.message, {
+            style: {
+              backgroundColor: "#4b5563",
+              color: "#ffffff",
+            },
+          });
         },
       }
     );
@@ -76,13 +82,16 @@ const Hero: FC = () => {
   async function envoleRegenerateImageProcess() {
     setImage("");
     if (userPrompt === "") {
-      alert("Enter prompt");
+      toast("Enter Prompt", {
+        icon: "❗",
+        style: {
+          backgroundColor: "#4b5563",
+          color: "#ffffff",
+        },
+      });
       return;
     }
-    if (userPrompt === "") {
-      alert("Enter prompt");
-      return;
-    }
+
     await hitRegenerateApi.mutateAsync(
       {
         text: userPrompt,
@@ -93,10 +102,16 @@ const Hero: FC = () => {
           setImage("");
           if (res.data) setImage(res.data);
         },
+        onError: (err) => {
+          toast.error(err.message, {
+            style: {
+              backgroundColor: "#4b5563",
+              color: "#ffffff",
+            },
+          });
+        },
       }
     );
-    setCredit((prev) => prev--);
-    localStorage.setItem("credit", JSON.stringify(credit));
   }
 
   const creationOrRegenIsLoading = hitApi.isLoading
@@ -207,8 +222,11 @@ const Hero: FC = () => {
         <div className="mb-8 flex gap-4">
           <Button
             onClick={envoleRegenerateImageProcess}
-            className={"rounded px-4 py-2 text-white"}
+            className={
+              "rounded px-4 py-2 text-white disabled:bg-gray-600 disabled:text-gray-400"
+            }
             buttonType="secondary"
+            disabled={!hitApi.isSuccess}
           >
             {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
           </Button>

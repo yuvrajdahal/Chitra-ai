@@ -32,6 +32,7 @@ function PageLayout({ children }: TLayout) {
           <LoginModal isOpen={isLoginModalOpen} onClose={setIsLoginModalOpen} />
         )}
       </ErrorBoundary>
+      <Toaster position="top-right" reverseOrder={false} />{" "}
     </div>
   );
 }

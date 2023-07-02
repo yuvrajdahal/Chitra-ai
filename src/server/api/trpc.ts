@@ -87,7 +87,7 @@ import { getServerAuthSession } from "../auth";
 import { PrismaClient } from "@prisma/client";
 import { User } from "next-auth";
 import { TRPCClientError } from "@trpc/client";
-import { add, isAfter, isSameDay } from "date-fns";
+import { add, formatDistanceToNow, isAfter, isSameDay } from "date-fns";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -158,8 +158,13 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
         // return next({ ctx })
       }
 
+      // Calculate the remaining time until the timeout period expires
+      const remainingTime = formatDistanceToNow(user.timeout, {
+        addSuffix: true,
+      });
+
       throw new TRPCError({
-        message: "Sorry, you are out of energy. Try again later.",
+        message: `Sorry, you are out of energy. Try again ${remainingTime}.`,
         code: "BAD_REQUEST",
       });
     }
@@ -174,13 +179,14 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
     });
 
     throw new TRPCError({
-      message: "Sorry, you are out of energy. Try again later.",
+      message: `Sorry, you are out of energy. Try again in 24 hours.`,
       code: "BAD_REQUEST",
     });
   }
 
   return next({ ctx });
 });
+
 export const validationProcedure = t.procedure
   .use(validateUserAuthentication)
   .use(validateUserCredit);

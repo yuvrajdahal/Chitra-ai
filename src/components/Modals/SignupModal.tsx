@@ -7,6 +7,7 @@ import { Router, useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { User } from "@prisma/client";
 import Loader from "../Loader/loader";
+import { toast } from "react-hot-toast";
 
 type ModalProps = {
   isOpen: boolean;
@@ -16,17 +17,27 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const session = useSession();
-  const router = useRouter();
   const signupMutation = api.userRouter.register.useMutation();
   const [user, setUser] = useState<User | null>(null);
 
   const handleSignup: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const result = await signupMutation.mutateAsync({
-      email,
-      password,
-    });
+    const result = await signupMutation.mutateAsync(
+      {
+        email,
+        password,
+      },
+      {
+        onError: (err) => {
+          toast.error(err.message, {
+            style: {
+              backgroundColor: "#4b5563",
+              color: "#ffffff",
+            },
+          });
+        },
+      }
+    );
     setUser(result.data);
     onClose();
   };

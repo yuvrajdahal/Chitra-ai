@@ -30,7 +30,12 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     setLoading(false);
     onClose();
     if (result?.error) {
-      toast.error("Something went wrong.");
+      toast.error("Something went wrong.", {
+        style: {
+          backgroundColor: "#4b5563",
+          color: "#ffffff",
+        },
+      });
     }
   };
 
