@@ -44,11 +44,7 @@ function PageLayout({ children }: TLayout) {
     );
   }, [authStatus]);
   return (
-    <div
-      className={
-        "min-h-screen w-full overflow-hidden overflow-y-scroll bg-gray-900 "
-      }
-    >
+    <div className={"min-h-screen w-full overflow-hidden bg-gray-900 "}>
       <ErrorBoundary>
         <Navbar />
         {children}
@@ -63,6 +59,7 @@ function PageLayout({ children }: TLayout) {
         )}
       </ErrorBoundary>
       <Toaster position="top-right" reverseOrder={false} />
+
       <Footer />
     </div>
   );

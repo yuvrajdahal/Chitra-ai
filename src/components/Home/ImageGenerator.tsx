@@ -32,9 +32,11 @@ const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
   const [image, setImage] = useState<string | null>("");
-  const size = selectedImageSize.split("x");
 
-  const [previousSize, setPreviousSize] = useState(size);
+  const [previousSize, setPreviousSize] = useState({
+    height: 50,
+    width: 50,
+  });
 
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
@@ -52,7 +54,7 @@ const Hero: FC = () => {
         if (isMobile) {
           return {
             height: windowSize.height / 2,
-            width: windowSize.width / 2,
+            width: windowSize.width / 1.5,
           };
         }
         if (isDesktop) {
@@ -69,7 +71,7 @@ const Hero: FC = () => {
         if (isMobile) {
           return {
             height: windowSize.height / 1.5,
-            width: windowSize.width / 1.5,
+            width: windowSize.width / 1.3,
           };
         }
         return {
@@ -236,7 +238,10 @@ const Hero: FC = () => {
               key={value}
               active={value === selectedImageSize}
               onClick={() => {
-                setPreviousSize(selectedImageSize.split("x"));
+                setPreviousSize({
+                  width: getSizeDimensions()?.width ?? 50,
+                  height: getSizeDimensions()?.height ?? 50,
+                });
                 setImageSize(value);
                 setImage(null);
                 if (divRef.current) {
@@ -259,8 +264,8 @@ const Hero: FC = () => {
         key={selectedImageSize}
         className="my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
         initial={{
-          width: isMobile ? "256px" : previousSize[0],
-          height: isMobile ? "256px" : previousSize[0],
+          width: previousSize.width,
+          height: previousSize.height,
           transformOrigin: "50% 50%",
         }}
         animate={{
@@ -269,6 +274,12 @@ const Hero: FC = () => {
         }}
         transition={{ duration: 0.5 }}
         ref={divRef}
+        onClick={() => {
+          setPreviousSize({
+            width: getSizeDimensions()?.width ?? 50,
+            height: getSizeDimensions()?.height ?? 50,
+          });
+        }}
       >
         {creationOrRegenIsLoading && (
           <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">
