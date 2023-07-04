@@ -8,6 +8,7 @@ import ErrorBoundary from "../Boundary/ErrorBoundary";
 import { Toaster, toast } from "react-hot-toast";
 import { api } from "@/utils/api";
 import useAuth from "@/hooks/user-state";
+import Footer from "./Footer";
 type TLayout = {
   children: ReactNode;
 };
@@ -61,7 +62,8 @@ function PageLayout({ children }: TLayout) {
           <LoginModal isOpen={isLoginModalOpen} onClose={setIsLoginModalOpen} />
         )}
       </ErrorBoundary>
-      <Toaster position="top-right" reverseOrder={false} />{" "}
+      <Toaster position="top-right" reverseOrder={false} />
+      <Footer />
     </div>
   );
 }

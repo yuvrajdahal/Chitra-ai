@@ -6,11 +6,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { api } from "@/utils/api";
 import Loader from "../Loader/loader";
 import { motion } from "framer-motion";
-import joinClassNames from "@/utils/className";
 import useAuth from "@/hooks/user-state";
 import useModalStore from "@/hooks/modal-state";
 import { toast } from "react-hot-toast";
 import useWindowSize from "@/hooks/useWindowSize";
+import joinClassNames from "@/utils/className";
 
 interface TSize {
   256: "256x256";
@@ -41,9 +41,56 @@ const Hero: FC = () => {
 
   const windowSize = useWindowSize();
   const isMobile = windowSize.width <= 768;
+  const isTab = windowSize.width <= 1024;
+  const isDesktop = windowSize.width >= 1024;
 
   const { authStatus, user, setUser } = useAuth();
 
+  const getSizeDimensions = () => {
+    switch (selectedImageSize) {
+      case Size.S256:
+        if (isMobile) {
+          return {
+            height: windowSize.height / 2,
+            width: windowSize.width / 2,
+          };
+        }
+        if (isDesktop) {
+          return {
+            height: windowSize.height / 2,
+            width: windowSize.width / 2.5,
+          };
+        }
+        return {
+          height: windowSize.height / 3,
+          width: windowSize.width / 3,
+        };
+      case Size.S512:
+        if (isMobile) {
+          return {
+            height: windowSize.height / 1.5,
+            width: windowSize.width / 1.5,
+          };
+        }
+        return {
+          height: windowSize.height / 1.5,
+          width: windowSize.width / 2,
+        };
+      case Size.S1024:
+        if (isMobile) {
+          return {
+            height: windowSize.height / 1.2,
+            width: windowSize.width / 1.2,
+          };
+        }
+        return {
+          height: windowSize.height / 1.3,
+          width: windowSize.width / 1.5,
+        };
+      default:
+        return null;
+    }
+  };
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       toast("Enter Prompt", {
@@ -124,7 +171,7 @@ const Hero: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pt-32">
+    <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pb-4 pt-28">
       <div className="flex items-center gap-4">
         <div className="text-4xl font-semibold text-white">Chitra</div>
         <Button buttonType="primary" className={"rounded px-2 py-1 text-white"}>
@@ -177,7 +224,12 @@ const Hero: FC = () => {
           <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
         )}
       </div>
-      <div className="mt-28 flex gap-4 md:mt-4">
+      <div
+        className={joinClassNames(
+          " flex gap-4 md:mt-4",
+          authStatus === "unauthenticated" ? "mt-28" : "mt-8"
+        )}
+      >
         {Object.entries(imageSize).map(([key, value]) => {
           return (
             <Tag
@@ -212,8 +264,8 @@ const Hero: FC = () => {
           transformOrigin: "50% 50%",
         }}
         animate={{
-          width: isMobile ? "256px" : `${size[0]}px`,
-          height: isMobile ? "256px" : `${size[1]}px`,
+          width: `${getSizeDimensions()?.width}px`,
+          height: `${getSizeDimensions()?.height}px`,
         }}
         transition={{ duration: 0.5 }}
         ref={divRef}
