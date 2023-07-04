@@ -142,7 +142,7 @@ const Hero: FC = () => {
             placeholder="Generate a Nepalese developing a site"
             onChange={(e) => setPrompt(e.target.value)}
           />
-          {authStatus === "authenticated" ? (
+          {authStatus === "authenticated" && (
             <Button
               buttonType="primary"
               className="rounded px-4 py-2 text-white"
@@ -154,7 +154,16 @@ const Hero: FC = () => {
                 "Create"
               )}
             </Button>
-          ) : (
+          )}
+          {authStatus === "loading" && (
+            <Button
+              buttonType="primary"
+              className="rounded px-4 py-2 text-white"
+            >
+              <Loader ringLayerColor="fill-amber-700" />
+            </Button>
+          )}
+          {authStatus === "unauthenticated" && (
             <Button
               className={"rounded px-4 py-2 text-white"}
               buttonType="primary"

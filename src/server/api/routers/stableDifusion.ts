@@ -17,6 +17,7 @@ import { ErrorProps } from "next/error";
 import { IncomingMessage } from "http";
 import { Configuration, OpenAIApi } from "openai";
 import { getSession } from "next-auth/react";
+import { isAfter, isSameDay } from "date-fns";
 // async function downloadImage(url: string) {
 //   try {
 //     console.log(url);
@@ -79,11 +80,10 @@ export const stableDiffusionRouter = createTRPCRouter({
 
         return { credit: updatedUser.credit, data: image };
       } catch (e: any) {
-        if (e.response) {
-          console.log(e.response.status);
-          console.log(e.response.data);
-        } else {
-          console.log(e.message);
+        if (e.response.status === 429) {
+          throw new Error(
+            "You exceeded your generation limit. Try again sometime"
+          );
         }
         throw new Error(e?.message);
       }
@@ -110,10 +110,29 @@ export const stableDiffusionRouter = createTRPCRouter({
         });
         return { data: image };
       } catch (e: any) {
-        if (e.response) {
-          console.log(e.response.data);
-        } else {
+        throw new Error(e?.message);
+      }
+    }),
+  checkForCredit: privateProcedure
+    .input(z.object({}))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const user = ctx.session?.user!;
+        if (user.timeout !== null && isAfter(new Date(), user.timeout)) {
+          // Check if it's the next day
+          const now = new Date();
+          const isNextDay = !isSameDay(now, user.timeout);
+
+          if (isNextDay) {
+            // Add 50 credits to the user's account
+            await ctx.prisma.user.update({
+              where: { id: user.id },
+              data: { credit: user.credit + 50, timeout: null },
+            });
+            return { data: "The credit has been restored" };
+          }
         }
+      } catch (e: any) {
         throw new Error(e?.message);
       }
     }),

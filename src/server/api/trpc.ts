@@ -87,7 +87,15 @@ import { getServerAuthSession } from "../auth";
 import { PrismaClient } from "@prisma/client";
 import { User } from "next-auth";
 import { TRPCClientError } from "@trpc/client";
-import { add, formatDistanceToNow, isAfter, isSameDay } from "date-fns";
+import {
+  add,
+  differenceInSeconds,
+  format,
+  formatDistanceToNow,
+  formatDuration,
+  isAfter,
+  isSameDay,
+} from "date-fns";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -133,55 +141,60 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
     ctx: ctx,
   });
 });
+
 const validateUserCredit = t.middleware(async ({ ctx, next }) => {
   const user = ctx.session?.user!;
 
   if (user.credit <= 0) {
-    // Check if the user is already in a timeout period
-    if (user.timeout && isAfter(new Date(), user.timeout)) {
-      // Check if it's the next day
+    if (user.timeout !== null && isAfter(new Date(), user.timeout)) {
       const now = new Date();
       const isNextDay = !isSameDay(now, user.timeout);
 
       if (isNextDay) {
-        // Add 50 credits to the user's account
         await ctx.prisma.user.update({
           where: { id: user.id },
           data: { credit: user.credit + 50, timeout: null },
         });
 
-        // Proceed to the next middleware
-        throw new TRPCError({
-          message: `Timeout already set until tomorrow. Try again tomorrow.`,
-          code: "BAD_REQUEST",
-        });
-        // return next({ ctx })
+        return next({ ctx });
       }
 
-      // Calculate the remaining time until the timeout period expires
       const remainingTime = formatDistanceToNow(user.timeout, {
         addSuffix: true,
       });
 
       throw new TRPCError({
-        message: `Sorry, you are out of energy. Try again ${remainingTime}.`,
+        message: `Sorry, you are out of energy. Try again  ${remainingTime} remaining.`,
         code: "BAD_REQUEST",
       });
     }
 
-    // Calculate the timeout period of 1 day
-    const timeoutPeriod = add(new Date(), { days: 1 });
+    if (user.timeout === null) {
+      const timeoutPeriod = add(new Date(), { days: 1 });
+      const remainingTime = formatDistanceToNow(user.timeout, {
+        addSuffix: true,
+      });
+      await ctx.prisma.user.update({
+        where: { id: user.id },
+        data: { timeout: timeoutPeriod },
+      });
 
-    // Update the user's timeout in the database
-    await ctx.prisma.user.update({
-      where: { id: user.id },
-      data: { timeout: timeoutPeriod },
-    });
+      throw new TRPCError({
+        message: `Sorry, you are out of energy. Try again ${remainingTime} remaining.`,
+        code: "BAD_REQUEST",
+      });
+    }
 
-    throw new TRPCError({
-      message: `Sorry, you are out of energy. Try again in 24 hours.`,
-      code: "BAD_REQUEST",
-    });
+    if (user.timeout !== null) {
+      console.log("dada");
+      const remainingTime = formatDistanceToNow(user.timeout, {
+        addSuffix: true,
+      });
+      throw new TRPCError({
+        message: `Sorry, you are out of energy. Try again ${remainingTime} remaining.`,
+        code: "BAD_REQUEST",
+      });
+    }
   }
 
   return next({ ctx });

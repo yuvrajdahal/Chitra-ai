@@ -57,17 +57,34 @@ const LinksForDesktop: FC<{
 }> = ({ authStatus, user, setIsLoginModalOpen, setIsSignupModalOpen }) => {
   return (
     <div className="hidden items-center justify-center gap-10 md:flex">
-      <div className="cursor-pointer text-white">Faq</div>
-      <div className="cursor-pointer text-white">Contact</div>
-      <div className="cursor-pointer text-white">Pricing</div>
-
       {authStatus === "loading" && (
         <div className="">
           <Loader ringLayerColor="fill-amber-700" />
         </div>
       )}
       {authStatus !== "loading" && (
-        <div className="relative top-0.5 cursor-pointer text-lg font-bold text-amber-600">
+        <div className="relative top-0.5 flex cursor-pointer items-center gap-4 text-lg font-bold text-amber-600">
+          {authStatus === "unauthenticated" && (
+            <div className="flex gap-2 whitespace-nowrap text-white">
+              Credit{" "}
+              <motion.span
+                initial={{
+                  x: 0,
+                }}
+                animate={{
+                  x: 4,
+                }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  duration: 0.6,
+                  ease: "easeIn",
+                }}
+              >
+                -&gt;
+              </motion.span>
+            </div>
+          )}
           {user?.credit}
         </div>
       )}
@@ -169,16 +186,6 @@ const LinksForMobile: FC<{
             onMouseLeave={() => setNavModalOpen(false)}
           >
             <div className="py-2 font-medium">
-              <div className="block px-4  py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white">
-                Faq
-              </div>
-              <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white">
-                Contact
-              </div>
-              <div className="block px-4  py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white">
-                Pricing
-              </div>
-
               {authStatus === "unauthenticated" && (
                 <div className="mx-4 mt-2">
                   <Button
