@@ -125,11 +125,14 @@ export const stableDiffusionRouter = createTRPCRouter({
 
           if (isNextDay) {
             // Add 50 credits to the user's account
-            await ctx.prisma.user.update({
+            const updatedUser = await ctx.prisma.user.update({
               where: { id: user.id },
               data: { credit: user.credit + 50, timeout: null },
             });
-            return { data: "The credit has been restored" };
+            return {
+              data: "The credit has been restored",
+              credit: updatedUser.credit,
+            };
           }
         }
       } catch (e: any) {

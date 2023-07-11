@@ -16,7 +16,7 @@ function PageLayout({ children }: TLayout) {
   const { isSignupModalOpen, setIsSignupModalOpen } = useModalStore();
   const { isLoginModalOpen, setIsLoginModalOpen } = useModalStore();
   const stableDiffusionApi = api.stableDiffusion.checkForCredit.useMutation();
-  const { authStatus } = useAuth();
+  const { authStatus, setUser, user } = useAuth();
 
   useEffect(() => {
     if (authStatus === "loading" || authStatus === "unauthenticated") return;
@@ -25,6 +25,10 @@ function PageLayout({ children }: TLayout) {
       {
         onSuccess: (res) => {
           if (!res) return;
+          setUser({
+            ...user,
+            credit: res.credit,
+          });
           toast.success(res?.data, {
             style: {
               backgroundColor: "#4b5563",
