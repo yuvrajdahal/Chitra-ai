@@ -151,6 +151,8 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
       const isNextDay = !isSameDay(now, user.timeout);
 
       if (isNextDay) {
+        console.log("timeoutPeriod");
+
         await ctx.prisma.user.update({
           where: { id: user.id },
           data: { credit: user.credit + 50, timeout: null },
@@ -171,7 +173,7 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
 
     if (user.timeout === null) {
       const timeoutPeriod = add(new Date(), { days: 1 });
-      const remainingTime = formatDistanceToNow(user.timeout, {
+      const remainingTime = formatDistanceToNow(timeoutPeriod, {
         addSuffix: true,
       });
       await ctx.prisma.user.update({
@@ -186,7 +188,6 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
     }
 
     if (user.timeout !== null) {
-      console.log("dada");
       const remainingTime = formatDistanceToNow(user.timeout, {
         addSuffix: true,
       });
