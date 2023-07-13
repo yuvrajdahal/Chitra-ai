@@ -145,14 +145,13 @@ const validateUserAuthentication = t.middleware(async ({ ctx, next }) => {
 const validateUserCredit = t.middleware(async ({ ctx, next }) => {
   const user = ctx.session?.user!;
 
-  if (user.credit <= 0) {
-    if (user.timeout !== null && isAfter(new Date(), user.timeout)) {
-      const now = new Date();
-      const isNextDay = !isSameDay(now, user.timeout);
+  if (user.credit < 5) {
+    const now = new Date();
+    if (user.timeout !== null) {
+      const isNextDay =
+        isSameDay(now, user.timeout) && isAfter(now, user.timeout);
 
       if (isNextDay) {
-        console.log("timeoutPeriod");
-
         await ctx.prisma.user.update({
           where: { id: user.id },
           data: { credit: user.credit + 50, timeout: null },
@@ -181,16 +180,6 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
         data: { timeout: timeoutPeriod },
       });
 
-      throw new TRPCError({
-        message: `Sorry, you are out of energy. Try again ${remainingTime} remaining.`,
-        code: "BAD_REQUEST",
-      });
-    }
-
-    if (user.timeout !== null) {
-      const remainingTime = formatDistanceToNow(user.timeout, {
-        addSuffix: true,
-      });
       throw new TRPCError({
         message: `Sorry, you are out of energy. Try again ${remainingTime} remaining.`,
         code: "BAD_REQUEST",

@@ -111,6 +111,7 @@ const Hero: FC = () => {
       },
       {
         onSuccess: (res) => {
+          if (!res) return;
           setUser({
             ...user,
             credit: res.credit,
