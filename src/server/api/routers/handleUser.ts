@@ -5,7 +5,8 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 import { env } from "@/env.mjs";
-
+import sendEmail from "@/utils/emailHandler";
+import fs from "fs";
 const resend = new Resend(env.RESEND_EMAIL_API);
 
 export const handleUserRouter = createTRPCRouter({
@@ -16,10 +17,17 @@ export const handleUserRouter = createTRPCRouter({
       const exists = await ctx.prisma.user.findFirst({
         where: { email },
       });
-      if (exists) {
+      if (exists && exists.isVerifed === false) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "User already exists.",
+          message:
+            "Please check the mail. A verification mail has been sent before",
+        });
+      }
+      if (exists && exists.isVerifed === true) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "User already exists. Try login",
         });
       }
       const hashedPassword = await hash(password);
@@ -37,9 +45,8 @@ export const handleUserRouter = createTRPCRouter({
         },
       });
 
-      const sentEmail = await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: email,
+      let mailOptions = {
+        email: email,
         subject: "Verify your email",
         html: `
         <!DOCTYPE html>
@@ -128,11 +135,22 @@ export const handleUserRouter = createTRPCRouter({
 </body>
 </html>
 `,
+      };
+      sendEmail(mailOptions).catch(async () => {
+        await ctx.prisma.user.delete({
+          where: {
+            id: result.id,
+          },
+        });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong please try again.",
+        });
       });
 
       return {
         status: 201,
-        message: "Account created successfully",
+        message: "Check the mail for the verification link.",
         data: result,
       };
     }),

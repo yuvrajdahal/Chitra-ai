@@ -46,7 +46,7 @@ function PageLayout({ children }: TLayout) {
         },
       }
     );
-  }, [authStatus]);
+  }, [authStatus, user.credit]);
   return (
     <div className={"min-h-screen w-full overflow-hidden bg-gray-900 "}>
       <ErrorBoundary>

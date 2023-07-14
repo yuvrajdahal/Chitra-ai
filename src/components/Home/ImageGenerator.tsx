@@ -1,4 +1,11 @@
-import React, { FC, HTMLAttributes, Suspense, useRef, useState } from "react";
+import React, {
+  FC,
+  HTMLAttributes,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Button from "../Buttons/Button";
 import Input from "../Inputs/Input";
 import Tag from "../Tags/Tag";
@@ -9,7 +16,7 @@ import { motion } from "framer-motion";
 import useAuth from "@/hooks/user-state";
 import useModalStore from "@/hooks/modal-state";
 import { toast } from "react-hot-toast";
-import useWindowSize from "@/hooks/useWindowSize";
+import useWindowSize, { WindowSize } from "@/hooks/useWindowSize";
 import joinClassNames from "@/utils/className";
 
 interface TSize {
@@ -27,72 +34,69 @@ enum Size {
   S512 = "512x512",
   S1024 = "1024x1024",
 }
-
+const getSizeDimensions = (windowSize: WindowSize, selectedImageSize: Size) => {
+  const isMobile = windowSize.width <= 768;
+  const isTab = windowSize.width <= 1024;
+  const isDesktop = windowSize.width >= 1024;
+  switch (selectedImageSize) {
+    case Size.S256:
+      if (isMobile) {
+        return {
+          height: windowSize.height / 2,
+          width: windowSize.width / 1.5,
+        };
+      }
+      if (isDesktop) {
+        return {
+          height: windowSize.height / 2,
+          width: windowSize.width / 2.5,
+        };
+      }
+      return {
+        height: windowSize.height / 3,
+        width: windowSize.width / 3,
+      };
+    case Size.S512:
+      if (isMobile) {
+        return {
+          height: windowSize.height / 1.5,
+          width: windowSize.width / 1.3,
+        };
+      }
+      return {
+        height: windowSize.height / 1.5,
+        width: windowSize.width / 2,
+      };
+    case Size.S1024:
+      if (isMobile) {
+        return {
+          height: windowSize.height / 1.2,
+          width: windowSize.width / 1.2,
+        };
+      }
+      return {
+        height: windowSize.height / 1.3,
+        width: windowSize.width / 1.5,
+      };
+    default:
+      return { ...windowSize };
+  }
+};
 const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
   const [image, setImage] = useState<string | null>("");
+  const windowSize = useWindowSize();
 
   const [previousSize, setPreviousSize] = useState({
-    height: 50,
-    width: 50,
+    ...getSizeDimensions(windowSize, selectedImageSize),
   });
 
   const hitApi = api.stableDiffusion.textToImage.useMutation();
   const hitRegenerateApi = api.stableDiffusion.regenerate.useMutation();
 
-  const windowSize = useWindowSize();
-  const isMobile = windowSize.width <= 768;
-  const isTab = windowSize.width <= 1024;
-  const isDesktop = windowSize.width >= 1024;
-
   const { authStatus, user, setUser } = useAuth();
 
-  const getSizeDimensions = () => {
-    switch (selectedImageSize) {
-      case Size.S256:
-        if (isMobile) {
-          return {
-            height: windowSize.height / 2,
-            width: windowSize.width / 1.5,
-          };
-        }
-        if (isDesktop) {
-          return {
-            height: windowSize.height / 2,
-            width: windowSize.width / 2.5,
-          };
-        }
-        return {
-          height: windowSize.height / 3,
-          width: windowSize.width / 3,
-        };
-      case Size.S512:
-        if (isMobile) {
-          return {
-            height: windowSize.height / 1.5,
-            width: windowSize.width / 1.3,
-          };
-        }
-        return {
-          height: windowSize.height / 1.5,
-          width: windowSize.width / 2,
-        };
-      case Size.S1024:
-        if (isMobile) {
-          return {
-            height: windowSize.height / 1.2,
-            width: windowSize.width / 1.2,
-          };
-        }
-        return {
-          height: windowSize.height / 1.3,
-          width: windowSize.width / 1.5,
-        };
-      default:
-        return null;
-    }
-  };
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       toast("Enter Prompt", {
@@ -240,8 +244,9 @@ const Hero: FC = () => {
               active={value === selectedImageSize}
               onClick={() => {
                 setPreviousSize({
-                  width: getSizeDimensions()?.width ?? 50,
-                  height: getSizeDimensions()?.height ?? 50,
+                  width: getSizeDimensions(windowSize, selectedImageSize).width,
+                  height: getSizeDimensions(windowSize, selectedImageSize)
+                    .height,
                 });
                 setImageSize(value);
                 setImage(null);
@@ -270,15 +275,17 @@ const Hero: FC = () => {
           transformOrigin: "50% 50%",
         }}
         animate={{
-          width: `${getSizeDimensions()?.width}px`,
-          height: `${getSizeDimensions()?.height}px`,
+          width: `${getSizeDimensions(windowSize, selectedImageSize)?.width}px`,
+          height: `${
+            getSizeDimensions(windowSize, selectedImageSize)?.height
+          }px`,
         }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.1 }}
         ref={divRef}
         onClick={() => {
           setPreviousSize({
-            width: getSizeDimensions()?.width ?? 50,
-            height: getSizeDimensions()?.height ?? 50,
+            width: getSizeDimensions(windowSize, selectedImageSize)?.width,
+            height: getSizeDimensions(windowSize, selectedImageSize)?.height,
           });
         }}
       >

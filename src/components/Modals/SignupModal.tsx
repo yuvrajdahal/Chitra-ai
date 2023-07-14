@@ -28,6 +28,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         password,
       },
       {
+        onSuccess: (res) => {
+          toast.success(res.message, {
+            style: {
+              backgroundColor: "#4b5563",
+              color: "#ffffff",
+            },
+          });
+        },
         onError: (err) => {
           toast.error(err.message, {
             style: {
@@ -39,7 +47,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       }
     );
     setUser(result.data);
-    onClose();
   };
 
   if (!isOpen) return <></>;

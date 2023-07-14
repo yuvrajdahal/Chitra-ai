@@ -165,7 +165,7 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
       });
 
       throw new TRPCError({
-        message: `Sorry, you are out of energy. Try again  ${remainingTime} remaining.`,
+        message: `You are out of energy. Try again  ${remainingTime} remaining.`,
         code: "BAD_REQUEST",
       });
     }
@@ -181,7 +181,7 @@ const validateUserCredit = t.middleware(async ({ ctx, next }) => {
       });
 
       throw new TRPCError({
-        message: `Sorry, you are out of energy. Try again ${remainingTime} remaining.`,
+        message: `You are out of energy. Try again ${remainingTime} remaining.`,
         code: "BAD_REQUEST",
       });
     }

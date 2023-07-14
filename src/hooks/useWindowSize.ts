@@ -1,6 +1,6 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
-interface WindowSize {
+export interface WindowSize {
   width: number;
   height: number;
 }
@@ -8,10 +8,10 @@ interface WindowSize {
 function useWindowSize(): WindowSize {
   const [windowSize, setWindowSize] = useState<WindowSize>({
     width: 0,
-    height: 0,
+    height: 500,
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     function updateWindowSize() {
       setWindowSize({
         width: window.innerWidth,

@@ -113,7 +113,7 @@ export const stableDiffusionRouter = createTRPCRouter({
         throw new Error(e?.message);
       }
     }),
-  checkForCredit: privateProcedure
+  checkForCredit: validationProcedure
     .input(z.object({}))
     .mutation(async ({ input, ctx }) => {
       try {

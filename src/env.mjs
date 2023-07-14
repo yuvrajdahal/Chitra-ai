@@ -15,6 +15,8 @@ export const env = createEnv({
     RESEND_EMAIL_API: z.string(),
     DEV_HOST: z.string(),
     PROD_HOST: z.string(),
+    SMTPMAILPASS: z.string(),
+    SMTPMAIL: z.string(),
   },
 
   /**
@@ -31,6 +33,8 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    SMTPMAIL: process.env.SMTPMAIL,
+    SMTPMAILPASS: process.env.SMTPMAILPASS,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
