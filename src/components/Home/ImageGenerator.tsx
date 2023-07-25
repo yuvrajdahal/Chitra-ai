@@ -1,23 +1,19 @@
-import React, {
-  FC,
-  HTMLAttributes,
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { FC, HTMLAttributes, useRef, useState } from "react";
 import Button from "../Buttons/Button";
 import Input from "../Inputs/Input";
 import Tag from "../Tags/Tag";
-import { NextApiRequest, NextApiResponse } from "next";
+
 import { api } from "@/utils/api";
 import Loader from "../Loader/loader";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import useAuth from "@/hooks/user-state";
 import useModalStore from "@/hooks/modal-state";
 import { toast } from "react-hot-toast";
 import useWindowSize, { WindowSize } from "@/hooks/useWindowSize";
 import joinClassNames from "@/utils/className";
+
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { BsFullscreen } from "react-icons/bs";
 
 interface TSize {
   256: "256x256";
@@ -176,149 +172,193 @@ const Hero: FC = () => {
   const { setIsSignupModalOpen } = useModalStore();
 
   const divRef = useRef<HTMLDivElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
+  // @ts-ignore
+  function handleChanegImage(image) {
+    setSelectedImage(image);
+  }
   return (
-    <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pb-4 pt-28">
-      <div className="flex items-center gap-4">
-        <div className="text-4xl font-semibold text-white">Chitra</div>
-        <Button buttonType="primary" className={"rounded px-2 py-1 text-white"}>
-          Ai
-        </Button>
-      </div>
-      <div className="mt-4 text-lg text-gray-400">
-        Free online AI image generator from text
-      </div>
-      <div className="flex-reverse-col relative mt-8 flex gap-4  md:flex-row">
+    <>
+      <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pb-4 pt-28">
         <div className="flex items-center gap-4">
-          <Input
-            value={userPrompt}
-            className="w-full py-2 md:w-[400px]"
-            placeholder="Generate a Nepalese developing a site"
-            onChange={(e) => setPrompt(e.target.value)}
-          />
-          {authStatus === "authenticated" && (
-            <Button
-              buttonType="primary"
-              className="rounded px-4 py-2 text-white"
-              onClick={envokeImageCreationProcess}
-            >
-              {hitApi.isLoading ? (
+          <div className="text-4xl font-semibold text-white">Chitra</div>
+          <Button
+            buttonType="primary"
+            className={"rounded px-2 py-1 text-white"}
+          >
+            Ai
+          </Button>
+        </div>
+        <div className="mt-4 text-lg text-gray-400">
+          Free online AI image generator from text
+        </div>
+        <div className="flex-reverse-col relative mt-8 flex gap-4  md:flex-row">
+          <div className="flex items-center gap-4">
+            <Input
+              value={userPrompt}
+              className="w-full py-2 md:w-[400px]"
+              placeholder="Generate a Nepalese developing a site"
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+            {authStatus === "authenticated" && (
+              <Button
+                buttonType="primary"
+                className="rounded px-4 py-2 text-white"
+                onClick={envokeImageCreationProcess}
+              >
+                {hitApi.isLoading ? (
+                  <Loader ringLayerColor="fill-amber-700" />
+                ) : (
+                  "Create"
+                )}
+              </Button>
+            )}
+            {authStatus === "loading" && (
+              <Button
+                buttonType="primary"
+                className="rounded px-4 py-2 text-white"
+              >
                 <Loader ringLayerColor="fill-amber-700" />
-              ) : (
-                "Create"
-              )}
-            </Button>
-          )}
-          {authStatus === "loading" && (
-            <Button
-              buttonType="primary"
-              className="rounded px-4 py-2 text-white"
-            >
-              <Loader ringLayerColor="fill-amber-700" />
-            </Button>
-          )}
+              </Button>
+            )}
+            {authStatus === "unauthenticated" && (
+              <Button
+                className={"rounded px-4 py-2 text-white"}
+                buttonType="primary"
+                onClick={setIsSignupModalOpen}
+              >
+                Signup
+              </Button>
+            )}
+          </div>
           {authStatus === "unauthenticated" && (
+            <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
+          )}
+        </div>
+        <div
+          className={joinClassNames(
+            " flex gap-4 md:mt-4",
+            authStatus === "unauthenticated" ? "mt-28" : "mt-8"
+          )}
+        >
+          {Object.entries(imageSize).map(([key, value]) => {
+            return (
+              <Tag
+                key={value}
+                active={value === selectedImageSize}
+                onClick={() => {
+                  setPreviousSize({
+                    width: getSizeDimensions(windowSize, selectedImageSize)
+                      .width,
+                    height: getSizeDimensions(windowSize, selectedImageSize)
+                      .height,
+                  });
+                  setImageSize(value);
+                  setImage(null);
+                  if (divRef.current) {
+                    divRef.current.scrollIntoView({
+                      behavior: "smooth",
+                      block: "end",
+                      inline: "end",
+                    });
+                  }
+                }}
+              >
+                <div className="jutsify-center flex items-center gap-1">
+                  <div className="text-white">{value}</div>
+                </div>
+              </Tag>
+            );
+          })}
+        </div>
+        <motion.div
+          key={selectedImageSize}
+          className="relative my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
+          initial={{
+            width: previousSize.width,
+            height: previousSize.height,
+            transformOrigin: "50% 50%",
+          }}
+          animate={{
+            width: `${
+              getSizeDimensions(windowSize, selectedImageSize)?.width
+            }px`,
+            height: `${
+              getSizeDimensions(windowSize, selectedImageSize)?.height
+            }px`,
+          }}
+          transition={{ duration: 0.1 }}
+          ref={divRef}
+          onClick={() => {
+            setPreviousSize({
+              width: getSizeDimensions(windowSize, selectedImageSize)?.width,
+              height: getSizeDimensions(windowSize, selectedImageSize)?.height,
+            });
+          }}
+        >
+          {creationOrRegenIsLoading && (
+            <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">
+              <Loader />
+            </div>
+          )}
+          {hitApi.isLoading === false && hitApi.isSuccess && image && (
+            <>
+              <img src={image} className="h-full w-full object-cover" />
+              <div className="absolute bottom-5 right-10 rounded bg-gray-900 p-2.5">
+                <BsFullscreen
+                  size={20}
+                  onClick={() => handleChanegImage(image)}
+                  className=" cursor-pointer text-white"
+                />
+              </div>
+            </>
+          )}
+        </motion.div>
+        {authStatus === "authenticated" && (
+          <div className="mb-8 flex gap-4">
+            <Button
+              onClick={envoleRegenerateImageProcess}
+              className={
+                "rounded px-4 py-2 text-white disabled:bg-gray-600 disabled:text-gray-400"
+              }
+              buttonType="secondary"
+              disabled={!hitApi.isSuccess}
+            >
+              {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
+            </Button>
             <Button
               className={"rounded px-4 py-2 text-white"}
               buttonType="primary"
-              onClick={setIsSignupModalOpen}
             >
-              Signup
+              Buy Credits
             </Button>
-          )}
-        </div>
-        {authStatus === "unauthenticated" && (
-          <AbsoluteGuide className="absolute -right-0 top-12 md:-right-28 md:top-0 " />
-        )}
-      </div>
-      <div
-        className={joinClassNames(
-          " flex gap-4 md:mt-4",
-          authStatus === "unauthenticated" ? "mt-28" : "mt-8"
-        )}
-      >
-        {Object.entries(imageSize).map(([key, value]) => {
-          return (
-            <Tag
-              key={value}
-              active={value === selectedImageSize}
-              onClick={() => {
-                setPreviousSize({
-                  width: getSizeDimensions(windowSize, selectedImageSize).width,
-                  height: getSizeDimensions(windowSize, selectedImageSize)
-                    .height,
-                });
-                setImageSize(value);
-                setImage(null);
-                if (divRef.current) {
-                  divRef.current.scrollIntoView({
-                    behavior: "smooth",
-                    block: "end",
-                    inline: "end",
-                  });
-                }
-              }}
-            >
-              <div className="jutsify-center flex items-center gap-1">
-                <div className="text-white">{value}</div>
-              </div>
-            </Tag>
-          );
-        })}
-      </div>
-      <motion.div
-        key={selectedImageSize}
-        className="my-8 overflow-hidden rounded border border-gray-400 bg-gray-600 text-white"
-        initial={{
-          width: previousSize.width,
-          height: previousSize.height,
-          transformOrigin: "50% 50%",
-        }}
-        animate={{
-          width: `${getSizeDimensions(windowSize, selectedImageSize)?.width}px`,
-          height: `${
-            getSizeDimensions(windowSize, selectedImageSize)?.height
-          }px`,
-        }}
-        transition={{ duration: 0.1 }}
-        ref={divRef}
-        onClick={() => {
-          setPreviousSize({
-            width: getSizeDimensions(windowSize, selectedImageSize)?.width,
-            height: getSizeDimensions(windowSize, selectedImageSize)?.height,
-          });
-        }}
-      >
-        {creationOrRegenIsLoading && (
-          <div className=" flex  h-full w-full animate-pulse flex-col items-center justify-center rounded border border-gray-400 bg-gray-500">
-            <Loader />
           </div>
-        )}
-        {hitApi.isLoading === false && hitApi.isSuccess && image && (
-          <img src={image} className="h-full w-full object-contain" />
-        )}
-      </motion.div>
-      {authStatus === "authenticated" && (
-        <div className="mb-8 flex gap-4">
-          <Button
-            onClick={envoleRegenerateImageProcess}
-            className={
-              "rounded px-4 py-2 text-white disabled:bg-gray-600 disabled:text-gray-400"
-            }
-            buttonType="secondary"
-            disabled={!hitApi.isSuccess}
+        )}{" "}
+      </section>
+      <AnimatePresence>
+        {selectedImage.length !== 0 && image && (
+          <motion.div
+            key={selectedImage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed top-0 z-[100] h-full w-full bg-black"
           >
-            {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
-          </Button>
-          <Button
-            className={"rounded px-4 py-2 text-white"}
-            buttonType="primary"
-          >
-            Buy Credits
-          </Button>
-        </div>
-      )}{" "}
-    </section>
+            <div className="absolute right-10 top-10">
+              <IoMdArrowRoundBack
+                size={30}
+                className="cursor-pointer text-white"
+                onClick={() => setSelectedImage("")}
+              />
+            </div>
+            <img src={image} className="h-full w-full  object-contain" />
+            IoMdArrowRoundBack
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
