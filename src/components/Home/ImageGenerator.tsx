@@ -344,7 +344,7 @@ const Hero: FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="fixed top-0 z-[100] h-full w-full bg-gray-900"
+            className="fixed top-0 z-[100] flex h-screen w-screen items-center justify-center bg-gray-900"
           >
             <div className="absolute right-10 top-10">
               <IoMdArrowRoundBack
@@ -353,8 +353,7 @@ const Hero: FC = () => {
                 onClick={() => setSelectedImage("")}
               />
             </div>
-            <img src={image} className="h-full w-full  object-contain" />
-            IoMdArrowRoundBack
+            <img src={image} className="object-contain" />
           </motion.div>
         )}
       </AnimatePresence>
