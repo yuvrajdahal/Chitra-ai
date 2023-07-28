@@ -10,13 +10,11 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     const token = String(req.query.token);
-    console.log(token);
     const user = await prisma.user.findFirst({
       where: {
         emailToken: token,
       },
     });
-    console.log(user);
     if (user) {
       await prisma.user.update({
         where: { id: user.id },

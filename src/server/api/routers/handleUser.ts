@@ -129,14 +129,15 @@ export const handleUserRouter = createTRPCRouter({
       env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
     }/api/auth/token?token=${
           result.emailToken
-        }" class="btn bg-primary-color text-button-text-color">Verify Email</a>
+        }" class="btn bg-primary-color text-button-text-color">Verify Email and Then Login</a>
     <p class="text-text-color mt-4">If you did not sign up for an account, please ignore this email.</p>
   </div>
 </body>
 </html>
 `,
       };
-      sendEmail(mailOptions).catch(async () => {
+      await sendEmail(mailOptions).catch(async (e) => {
+        console.log(e);
         await ctx.prisma.user.delete({
           where: {
             id: result.id,
