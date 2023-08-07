@@ -6,7 +6,6 @@ import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 import { env } from "@/env.mjs";
 import sendEmail from "@/utils/emailHandler";
-import fs from "fs";
 
 export const handleUserRouter = createTRPCRouter({
   register: publicProcedure
@@ -138,7 +137,7 @@ export const handleUserRouter = createTRPCRouter({
     <p class="text-text-color mb-4">To get started, please verify your email by clicking the button below:</p>
     <a href="${
       env.NODE_ENV === "development" ? env.DEV_HOST : env.PROD_HOST
-    }/api/auth/token?token=${
+    }api/auth/token?token=${
           result.emailToken
         }" class="btn bg-primary-color text-button-text-color">Verify Email and Then Login</a>
     <p class="text-text-color mt-4">If you did not sign up for an account, please ignore this email.</p>
