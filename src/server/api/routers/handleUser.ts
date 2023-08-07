@@ -7,13 +7,24 @@ import crypto from "crypto";
 import { env } from "@/env.mjs";
 import sendEmail from "@/utils/emailHandler";
 import fs from "fs";
-const resend = new Resend(env.RESEND_EMAIL_API);
 
 export const handleUserRouter = createTRPCRouter({
   register: publicProcedure
     .input(z.object({ email: z.string(), password: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { email, password } = input;
+      if (!email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Please add email",
+        });
+      }
+      if (!password) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Please add password",
+        });
+      }
       const exists = await ctx.prisma.user.findFirst({
         where: { email },
       });
