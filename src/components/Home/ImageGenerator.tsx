@@ -1,28 +1,27 @@
-import React, { FC, HTMLAttributes, useRef, useState } from "react";
-import Button from "../Buttons/Button";
+import React, { FC, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 
 import { api } from "@/utils/api";
-import Loader from "../Loader/loader";
-import { AnimatePresence, motion } from "framer-motion";
-import useAuth from "@/hooks/user-state";
-import useModalStore from "@/hooks/modal-state";
-import { toast } from "react-hot-toast";
-import useWindowSize, { WindowSize } from "@/hooks/useWindowSize";
-import joinClassNames from "@/utils/className";
 
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { BsFullscreen } from "react-icons/bs";
-import { Size, imageSize } from "./dto";
+import { Size } from "./dto";
+
 import ImageGeneratorInput from "./ImageGeneratorInput";
-import { getSizeDimensions } from "@/hooks/getDimension";
 import ImageGeneratorTags from "./ImageGeneratorTags";
 import ImageGeneratorOutputBox from "./ImageGeneratorOutputBox";
 import ImageAsFullScreen from "./ImageAsFullScreen";
+import ImageGeneratorHeader from "./ImageGeneratorHeader";
+import HelperButtons from "./HelperButtons";
+
+import { getSizeDimensions } from "@/hooks/getDimension";
+import useAuth from "@/hooks/user-state";
+import useModalStore from "@/hooks/modal-state";
+import useWindowSize from "@/hooks/useWindowSize";
 
 const Hero: FC = () => {
   const [selectedImageSize, setImageSize] = useState<Size>(Size.S512);
   const [userPrompt, setPrompt] = useState<string>("");
   const [image, setImage] = useState<string | null>("");
+
   const windowSize = useWindowSize();
 
   const [previousSize, setPreviousSize] = useState({
@@ -34,6 +33,7 @@ const Hero: FC = () => {
 
   const { authStatus, user, setUser } = useAuth();
 
+  // Envokes creation of image from backend
   async function envokeImageCreationProcess() {
     if (userPrompt === "") {
       toast("Enter Prompt", {
@@ -70,6 +70,7 @@ const Hero: FC = () => {
       }
     );
   }
+  // Envokes regeneration of image from backend ( using a hack )
   async function envoleRegenerateImageProcess() {
     setImage("");
     if (userPrompt === "") {
@@ -122,18 +123,7 @@ const Hero: FC = () => {
   return (
     <>
       <section className="container mx-auto flex flex-col  items-center justify-center justify-center px-4 pb-4 pt-28">
-        <div className="flex items-center gap-4">
-          <div className="text-4xl font-semibold text-white">Chitra</div>
-          <Button
-            buttonType="primary"
-            className={"rounded px-2 py-1 text-white"}
-          >
-            Ai
-          </Button>
-        </div>
-        <div className="mt-4 text-lg text-gray-400">
-          Free online AI image generator from text
-        </div>
+        <ImageGeneratorHeader />
         <ImageGeneratorInput
           setIsSignupModalOpen={setIsSignupModalOpen}
           isLoading={hitApi.isLoading}
@@ -163,26 +153,12 @@ const Hero: FC = () => {
           setPreviousSize={setPreviousSize}
           onClick={() => handleChanegImage(image)}
         />
-        {authStatus === "authenticated" && (
-          <div className="mb-8 flex gap-4">
-            <Button
-              onClick={envoleRegenerateImageProcess}
-              className={
-                "rounded px-4 py-2 text-white disabled:bg-gray-600 disabled:text-gray-400"
-              }
-              buttonType="secondary"
-              disabled={!hitApi.isSuccess}
-            >
-              {hitRegenerateApi.isLoading ? <Loader /> : "Re-Generate"}
-            </Button>
-            <Button
-              className={"rounded px-4 py-2 text-white"}
-              buttonType="primary"
-            >
-              Buy Credits
-            </Button>
-          </div>
-        )}
+        <HelperButtons
+          authStatus={authStatus}
+          envoleRegenerateImageProcess={envoleRegenerateImageProcess}
+          isSuccess={hitApi.isSuccess}
+          isLoading={hitRegenerateApi.isLoading}
+        />
       </section>
       <ImageAsFullScreen
         selectedImage={selectedImage}
