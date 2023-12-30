@@ -1,4 +1,3 @@
-import { Resend } from "resend";
 import { hash } from "argon2";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";

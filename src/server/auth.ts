@@ -20,6 +20,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password", placeholder: "human" },
       },
       authorize: async (credentials): Promise<User | null> => {
+        console.log("hey");
         const { email, password } = credentials as {
           email: string;
           password: string;
@@ -29,7 +30,7 @@ export const authOptions: NextAuthOptions = {
           user = await prisma.user.findFirst({
             where: { email: email },
           });
-
+          console.log(user);
           if (!user) {
             return null;
           }

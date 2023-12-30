@@ -28,7 +28,6 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       callbackUrl: "/",
     });
     setLoading(false);
-    onClose();
     if (result?.error) {
       toast.error("Something went wrong.", {
         style: {
@@ -37,6 +36,7 @@ const LoginModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         },
       });
     }
+    onClose();
   };
 
   if (!isOpen) return <></>;

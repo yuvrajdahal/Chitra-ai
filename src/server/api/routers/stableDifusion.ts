@@ -1,3 +1,4 @@
+import Replicate from "replicate";
 import { env } from "@/env.mjs";
 import { z } from "zod";
 import fs from "fs";
@@ -18,19 +19,7 @@ import { IncomingMessage } from "http";
 import { Configuration, OpenAIApi } from "openai";
 import { getSession } from "next-auth/react";
 import { add, formatDistanceToNow, isAfter, isSameDay } from "date-fns";
-// async function downloadImage(url: string) {
-//   try {
-//     console.log(url);
-//     const response = await axios({
-//       url: url,
-//       responseType: "stream",
-//       method: "GET",
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error downloading image:", error);
-//   }
-// }
+
 const http = require("http");
 
 function downloadImage(url: string, destinationPath: string): Promise<void> {
@@ -67,17 +56,41 @@ export const stableDiffusionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        const aiRes = await openAi.createImage({
-          prompt: input.text,
-          n: 1,
-          size: input.size,
+        const replicate = new Replicate({
+          auth: env.REPLICATE_API_TOKEN,
         });
-        const image = aiRes.data.data[0]?.url;
+        const height = input.size.split("x")[0];
+        const width = input.size.split("x")[1];
+        const output: any = await replicate.run(
+          "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+          {
+            input: {
+              width: height?.toString,
+              height: width?.toString,
+              prompt: input.text,
+              refine: "expert_ensemble_refiner",
+              scheduler: "K_EULER",
+              lora_scale: 0.6,
+              num_outputs: 1,
+              guidance_scale: 7.5,
+              apply_watermark: false,
+              high_noise_frac: 0.8,
+              negative_prompt: "",
+              prompt_strength: 0.8,
+              num_inference_steps: 25,
+            },
+          }
+        );
+        // const aiRes = await openAi.createImage({
+        //   prompt: input.text,
+        //   n: 1,
+        //   size: input.size,
+        // });
+        const image = output[0] as string;
         const updatedUser = await ctx.prisma.user.update({
           where: { id: ctx.session?.user.id },
           data: { credit: { decrement: 5 } },
         });
-
         return { credit: updatedUser.credit, data: image };
       } catch (e: any) {
         if (e.response.status === 429) {

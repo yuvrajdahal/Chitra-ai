@@ -6,6 +6,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    REPLICATE_API_TOKEN: z.string(),
     DATABASE_URL: z.string().url(),
     OPENAI_API_KEY: z.string(),
     JWT_SECRET: z.string(),
@@ -36,6 +37,7 @@ export const env = createEnv({
     SMTPMAIL: process.env.SMTPMAIL,
     SMTPMAILPASS: process.env.SMTPMAILPASS,
     DATABASE_URL: process.env.DATABASE_URL,
+    REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     JWT_SECRET: process.env.JWT_SECRET,
